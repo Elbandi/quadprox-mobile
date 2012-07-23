@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp" >
+
+        <ImageView
+            android:id="@+id/vmIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/ic_vm" />
+
+        <TextView
+            android:id="@+id/vmName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@+id/vmIcon"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textSize="23sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/vmStatusLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/vmName"
+            android:layout_below="@+id/vmName"
+            android:layout_marginTop="2dp"
+            android:text="@string/status_label"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/vmStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/vmStatusLabel"
+            android:layout_marginLeft="3dp"
+            android:layout_toRightOf="@+id/vmStatusLabel"
+            android:textSize="15sp" />
+        
+        <TextView
+            android:id="@+id/vmIdLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/vmStatus"
+            android:layout_marginLeft="18dp"
+            android:layout_alignBaseline="@+id/vmStatusLabel"
+            android:layout_below="@+id/vmName"
+            android:layout_marginTop="2dp"
+            android:text="@string/id_label"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/vmId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/vmIdLabel"
+            android:layout_marginLeft="3dp"
+            android:layout_toRightOf="@+id/vmIdLabel"
+            android:textSize="15sp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="#323232"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Statistics"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp" >
+
+        <ImageView
+            android:id="@+id/cpuIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/ic_vm_cpu" />
+
+        <TextView
+            android:id="@+id/vmCpuLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="3dp"
+            android:layout_toRightOf="@+id/cpuIcon"
+            android:text="@string/cpu_label"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/vmCpu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/vmCpuLabel"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/vmCpuLabel"
+            android:textSize="17sp" />
+
+        <ImageView
+            android:id="@+id/memIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_alignLeft="@+id/cpuIcon"
+            android:layout_below="@+id/cpuIcon"
+            android:src="@drawable/ic_vm_ram" />
+
+        <TextView
+            android:id="@+id/vmMemLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/vmCpuLabel"
+            android:layout_below="@+id/vmCpuLabel"
+            android:layout_marginTop="12dp"
+            android:layout_toRightOf="@+id/memIcon"
+            android:text="@string/mem_label"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/vmMem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/vmMemLabel"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/vmMemLabel"
+            android:textSize="17sp" />
+
+        <ImageView
+            android:id="@+id/uptimeIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_alignLeft="@+id/cpuIcon"
+            android:layout_below="@+id/memIcon"
+            android:src="@drawable/ic_vm_uptime" />
+
+        <TextView
+            android:id="@+id/vmUptimeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/vmCpuLabel"
+            android:layout_below="@+id/vmMemLabel"
+            android:layout_marginTop="12dp"
+            android:layout_toRightOf="@+id/uptimeIcon"
+            android:text="@string/uptime_label"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/vmUptime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/vmUptimeLabel"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/vmUptimeLabel"
+            android:textSize="17sp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="#323232"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Notes"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp" >
+
+        <TextView
+            android:id="@+id/vmNotes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp" />
+    </ScrollView>
+
+</LinearLayout>

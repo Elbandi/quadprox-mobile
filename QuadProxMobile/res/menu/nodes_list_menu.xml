@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/updateNodesPref"
+        android:showAsAction="ifRoom"
+        android:title="@string/updatePref_label"/>
+    <item
+        android:id="@+id/logPref"
+        android:title="@string/logPref_label"/>
+    <item
+        android:id="@+id/authPref"
+        android:title="@string/authPref_label"/>
+
+</menu>

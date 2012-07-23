@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/titleLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/qpmLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/qpm_launcher" />
+
+        <TextView
+            android:id="@+id/appName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/qpmLogo"
+            android:text="@string/app_name"
+            android:textSize="27sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/appDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/appName"
+            android:layout_below="@+id/appName"
+            android:text="@string/app_description"
+            android:textSize="13sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/titleLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical" >
+
+        <EditText
+            android:id="@+id/serverInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/usernameInput"
+            android:layout_alignRight="@+id/usernameInput"
+            android:layout_below="@+id/appDescription"
+            android:hint="@string/server_hint"
+            android:inputType="textUri"
+            android:singleLine="true" />
+
+        <TextView
+            android:id="@+id/serverLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/serverInput"
+            android:layout_alignBottom="@+id/serverInput"
+            android:layout_marginLeft="8dp"
+            android:text="@string/server_label" />
+
+        <EditText
+            android:id="@+id/usernameInput"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/serverInput"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="8dp"
+            android:layout_toRightOf="@+id/usernameLabel"
+            android:hint="@string/username_hint"
+            android:singleLine="true" />
+
+        <TextView
+            android:id="@+id/usernameLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/usernameInput"
+            android:layout_alignBottom="@+id/usernameInput"
+            android:layout_alignLeft="@+id/serverLabel"
+            android:text="@string/username_label" />
+
+        <EditText
+            android:id="@+id/realmInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/usernameInput"
+            android:layout_alignRight="@+id/usernameInput"
+            android:layout_below="@+id/usernameInput"
+            android:hint="@string/realm_hint" />
+
+        <TextView
+            android:id="@+id/realmLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/realmInput"
+            android:layout_alignBottom="@+id/realmInput"
+            android:layout_alignLeft="@+id/usernameLabel"
+            android:text="@string/realm_label" />
+
+        <EditText
+            android:id="@+id/passwordInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/usernameInput"
+            android:layout_alignRight="@+id/usernameInput"
+            android:layout_below="@+id/realmInput"
+            android:hint="@string/password_hint"
+            android:inputType="textPassword"
+            android:singleLine="true" />
+
+        <TextView
+            android:id="@+id/passwordLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/passwordInput"
+            android:layout_alignBottom="@+id/passwordInput"
+            android:layout_alignLeft="@+id/realmLabel"
+            android:text="@string/password_label" />
+
+        <Button
+            android:id="@+id/loginButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/passwordInput"
+            android:layout_below="@+id/passwordInput"
+            android:text="@string/loginButton_label" />
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:adjustViewBounds="true"
+        android:src="@drawable/quadrata_logo" />
+
+</RelativeLayout>

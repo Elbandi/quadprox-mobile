@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/vmRow"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="5dp"
+    android:paddingTop="3dp" >
+
+    <ImageView
+        android:id="@+id/vmTypeIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp" />
+
+    <ImageView
+        android:id="@+id/vmIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="2dp"
+        android:layout_marginTop="8dp"
+        android:layout_toRightOf="@+id/vmTypeIcon" />
+
+    <TextView
+        android:id="@+id/vmRowName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="3dp"
+        android:layout_toRightOf="@+id/vmIcon"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/vmRowCpuLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/vmRowName"
+        android:layout_below="@+id/vmRowName"
+        android:text="@string/cpu_label"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/vmRowCpu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/vmRowCpuLabel"
+        android:layout_marginLeft="3dp"
+        android:layout_toRightOf="@+id/vmRowCpuLabel"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/vmRowMemLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/vmRowCpu"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/vmRowCpu"
+        android:text="@string/mem_label"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/vmRowMem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/vmRowMemLabel"
+        android:layout_marginLeft="3dp"
+        android:layout_toRightOf="@+id/vmRowMemLabel"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/vmRowIdLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/vmRowMem"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/vmRowMem"
+        android:text="@string/id_label"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/vmRowId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/vmRowIdLabel"
+        android:layout_marginLeft="3dp"
+        android:layout_toRightOf="@+id/vmRowIdLabel"
+        android:textSize="13sp" />
+
+</RelativeLayout>

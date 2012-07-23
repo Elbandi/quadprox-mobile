@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/logRow"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="5dp"
+    android:paddingTop="5dp" >
+
+    <ImageView
+        android:id="@+id/taskColor"
+        android:layout_width="5dp"
+        android:layout_height="63dp"
+        android:layout_marginTop="2dp"
+        android:layout_alignParentLeft="true" />
+
+    <ImageView
+        android:id="@+id/taskStartIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="13dp"
+        android:layout_marginTop="3dp"
+        android:src="@drawable/ic_log_start" />
+
+    <TextView
+        android:id="@+id/taskStartTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_toRightOf="@+id/taskStartIcon"
+        android:textSize="14sp" />
+
+    <ImageView
+        android:id="@+id/taskStopIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="3dp"
+        android:layout_toRightOf="@+id/taskStartTime"
+        android:src="@drawable/ic_log_stop" />
+
+    <TextView
+        android:id="@+id/taskStopTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/taskStartTime"
+        android:layout_marginLeft="5dp"
+        android:layout_toRightOf="@+id/taskStopIcon"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/taskVmLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/taskStartTime"
+        android:layout_marginLeft="13dp"
+        android:text="@string/vm_label"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/taskVm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/taskVmLabel"
+        android:layout_marginLeft="3dp"
+        android:layout_toRightOf="@+id/taskVmLabel"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/taskTypeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/taskVmLabel"
+        android:layout_below="@+id/taskVmLabel"
+        android:text="@string/type_label"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/taskType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/taskTypeLabel"
+        android:layout_marginLeft="3dp"
+        android:layout_toRightOf="@+id/taskTypeLabel"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/taskUserLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/taskTypeLabel"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/taskType"
+        android:text="@string/user_label"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/taskUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/taskUserLabel"
+        android:layout_marginLeft="3dp"
+        android:layout_toRightOf="@+id/taskUserLabel"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textSize="15sp" />
+
+</RelativeLayout>

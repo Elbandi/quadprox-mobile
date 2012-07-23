@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/nodeRow"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="3dp"
+    android:paddingBottom="5dp" >
+
+    <ImageView 
+        android:id="@+id/nodeIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="2dp"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/ic_node_list"/>
+    
+    <TextView
+        android:id="@+id/nodeRowName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:layout_marginLeft="6dp"
+        android:layout_toRightOf="@+id/nodeIcon"
+        android:textStyle="bold"
+        android:textSize="18sp" />
+    
+    <TextView
+        android:id="@+id/nodeRowVers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/nodeRowName"
+        android:layout_alignLeft="@+id/nodeRowName"
+        android:textSize="13sp" />
+
+</RelativeLayout>

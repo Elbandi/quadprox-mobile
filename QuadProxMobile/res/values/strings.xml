@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">QuadProx Mobile</string>
+    <string name="username_hint">username</string>
+    <string name="password_hint">password</string>
+    <string name="server_hint">https://server:8006/</string>
+    <string name="username_label">Username</string>
+    <string name="realm_label">Realm</string>
+    <string name="password_label">Password</string>
+    <string name="server_label">Server</string>
+    <string name="loginButton_label">Login</string>
+    <string name="stopVmButton_label">Stop</string>
+    <string name="startVmButton_label">Start</string>
+    <string name="updateVmButton_label">VM Details</string>
+    <string name="authPref_label">Login data</string>
+    <string name="updatePref_label">Refresh</string>
+    <string name="app_description">Android Proxmox Client v1.0</string>
+    <string name="clusterNodes_label">Nodes: </string>
+    <string name="nodeVZ_label">VZ: </string>
+    <string name="nodeQM_label">Qemu:</string>
+    <string name="cpu_label">Cpu: </string>
+    <string name="mem_label">Memory: </string>
+    <string name="uptime_label">Uptime: </string>
+    <string name="startPref_label">Start</string>
+    <string name="stopPref_label">Stop</string>
+    <string name="status_label">Status: </string>
+    <string name="id_label">ID: </string>
+    <string name="errors_label">Errors: </string>
+    <string name="vm_label">VM: </string>
+    <string name="user_label">User: </string>
+    <string name="type_label">Type: </string>
+    <string name="logs_title">Logs</string>
+    <string name="logPref_label">View Logs</string>
+    <string name="realm_log_label">Realm: </string>
+    <string name="node_label">Node: </string>
+    <string name="start_time_label">Started: </string>
+    <string name="serverButton_label">Check</string>
+    <string name="realm_hint">realm (eg. pve, pam, ...)</string>
+    <string name="migratePref_label">Migrate</string>
+
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/updateVmPref"
+        android:showAsAction="ifRoom"
+        android:title="@string/updatePref_label"/>
+    <item
+        android:id="@+id/logPref"
+        android:title="@string/logPref_label"/>
+
+</menu>

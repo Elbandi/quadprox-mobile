@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp" >
+
+        <ImageView
+            android:id="@+id/nodeIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/ic_node" />
+
+        <TextView
+            android:id="@+id/nodeInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@+id/nodeIcon"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textSize="23sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/nodeVers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/nodeInfo"
+            android:layout_below="@+id/nodeInfo"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/nodeVZLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_below="@+id/nodeIcon"
+            android:text="@string/nodeVZ_label"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/nodeVZ"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/nodeVZLabel"
+            android:layout_alignBaseline="@+id/nodeVZLabel"
+            android:layout_marginLeft="3dp"
+            android:textSize="14sp" />
+        
+        <TextView
+            android:id="@+id/nodeQMLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@+id/nodeVZ"
+            android:layout_alignBaseline="@+id/nodeVZ"
+            android:text="@string/nodeQM_label"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/nodeQM"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/nodeQMLabel"
+            android:layout_alignBaseline="@+id/nodeQMLabel"
+            android:layout_marginLeft="3dp"
+            android:textSize="14sp" />
+        
+        <TextView
+            android:id="@+id/nodeCpuLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/nodeVZLabel"
+            android:layout_below="@+id/nodeVZLabel"
+            android:text="@string/cpu_label"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/nodeCpu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/nodeCpuLabel"
+            android:layout_alignBaseline="@+id/nodeCpuLabel"
+            android:layout_marginLeft="3dp"
+            android:textSize="14sp" />
+        
+        <TextView
+            android:id="@+id/nodeMemLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@+id/nodeCpu"
+            android:layout_alignBaseline="@+id/nodeCpuLabel"
+            android:text="@string/mem_label"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/nodeMem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/nodeMemLabel"
+            android:layout_alignBaseline="@+id/nodeMemLabel"
+            android:layout_marginLeft="3dp"
+            android:textSize="14sp" />
+        
+        <TextView
+            android:id="@+id/nodeUptimeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/nodeVZLabel"
+            android:layout_below="@+id/nodeCpuLabel"
+            android:text="@string/uptime_label"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/nodeUptime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/nodeUptimeLabel"
+            android:layout_alignBaseline="@+id/nodeUptimeLabel"
+            android:layout_marginLeft="3dp"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="#323232"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Virtual Machines"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/vmList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </ListView>
+
+</LinearLayout>
