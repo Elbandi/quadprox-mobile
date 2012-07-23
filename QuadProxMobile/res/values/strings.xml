@@ -38,5 +38,6 @@
     <string name="serverButton_label">Check</string>
     <string name="realm_hint">realm (eg. pve, pam, ...)</string>
     <string name="migratePref_label">Migrate</string>
+    <string name="onlineMigrateCheck_label">Online</string>
 
 </resources>

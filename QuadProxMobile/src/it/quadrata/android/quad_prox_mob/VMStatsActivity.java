@@ -17,10 +17,12 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -31,6 +33,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -365,12 +370,49 @@ public class VMStatsActivity extends Activity {
 	}
 
 	private void migrateVm() {
+		
+		// Migrate dialog
+		Dialog migrateDialog = new Dialog(getApplicationContext());
+		migrateDialog
+				.setContentView(R.layout.migrate_dialog_layout);
+		migrateDialog.setTitle("Migrate to");
+		Spinner nodeSpinner = (Spinner) findViewById(R.id.migrateNode_spinner);
+		final ArrayAdapter<String> nodesAdapter = new ArrayAdapter<String>(
+				VMStatsActivity.this,
+				android.R.layout.simple_spinner_item);
+		nodesAdapter
+				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		CheckBox onlineMigrateCheck = (CheckBox) findViewById(R.id.onlineMigrate_check);
+		
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
 					ProxmoxCustomApp httpApp = (ProxmoxCustomApp) getApplication();
 					HttpClient migrateVmHttpClient = httpApp.getHttpClient();
+					
+					// Nodes list request
+					HttpGet nodesRequest = new HttpGet(server
+							+ "/api2/json/nodes");
+					nodesRequest.addHeader("Cookie", "PVEAuthCookie=" + ticket);
+					String nodesResponse = migrateVmHttpClient.execute(
+							nodesRequest, vmStatsResponseHandler);
+					JSONObject nodesObject = new JSONObject(nodesResponse);
+					JSONArray nodesArray = nodesObject.getJSONArray("data");
+					final int nodesArrayLength = nodesArray.length();
+					JSONObject singleNodeObject = new JSONObject();
+					for (int i = 0; i <= (nodesArrayLength - 1); i++) {
+						singleNodeObject = nodesArray.getJSONObject(i);
+						final String node = singleNodeObject.getString("node");
+						VMStatsActivity.this.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								nodesAdapter.add(node);
+							}
+						});
+					}
+					
+					// Migrate request
 					HttpPost migrateVmRequest = new HttpPost();
 					URI vzStartUri = new URI(server + "/api2/json/nodes/"
 							+ node + "/openvz/" + vmid + "/migrate");
