@@ -22,7 +22,6 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,11 +29,17 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -71,6 +76,7 @@ public class VMStatsActivity extends Activity {
 
 	// Migrate variables
 	private static String node_target;
+	private static int online_migr;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -179,36 +185,7 @@ public class VMStatsActivity extends Activity {
 						Log.e(e.getClass().getName(), "No error message");
 					}
 					if (isOnline() == false) {
-						VMStatsActivity.this.runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								AlertDialog.Builder builder = new AlertDialog.Builder(
-										VMStatsActivity.this);
-								builder.setTitle("No network connection");
-								builder.setMessage("An Internet connection is needed. \nDo you want to retry?");
-								builder.setCancelable(false);
-								builder.setPositiveButton("Yes",
-										new DialogInterface.OnClickListener() {
-											@Override
-											public void onClick(
-													DialogInterface dialog,
-													int id) {
-												updateVmStats();
-											}
-										});
-								builder.setNegativeButton("No",
-										new DialogInterface.OnClickListener() {
-											@Override
-											public void onClick(
-													DialogInterface dialog,
-													int id) {
-												dialog.dismiss();
-											}
-										});
-								AlertDialog alertDialog = builder.create();
-								alertDialog.show();
-							}
-						});
+						showNoConnDialog();
 					}
 				}
 			}
@@ -256,36 +233,7 @@ public class VMStatsActivity extends Activity {
 						Log.e(e.getClass().getName(), "No error message");
 					}
 					if (isOnline() == false) {
-						VMStatsActivity.this.runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								AlertDialog.Builder builder = new AlertDialog.Builder(
-										VMStatsActivity.this);
-								builder.setTitle("No network connection");
-								builder.setMessage("An Internet connection is needed. \nDo you want to retry?");
-								builder.setCancelable(false);
-								builder.setPositiveButton("Yes",
-										new DialogInterface.OnClickListener() {
-											@Override
-											public void onClick(
-													DialogInterface dialog,
-													int id) {
-												startVm();
-											}
-										});
-								builder.setNegativeButton("No",
-										new DialogInterface.OnClickListener() {
-											@Override
-											public void onClick(
-													DialogInterface dialog,
-													int id) {
-												dialog.dismiss();
-											}
-										});
-								AlertDialog alertDialog = builder.create();
-								alertDialog.show();
-							}
-						});
+						showNoConnDialog();
 					}
 				}
 			}
@@ -333,36 +281,7 @@ public class VMStatsActivity extends Activity {
 						Log.e(e.getClass().getName(), "No error message");
 					}
 					if (isOnline() == false) {
-						VMStatsActivity.this.runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								AlertDialog.Builder builder = new AlertDialog.Builder(
-										VMStatsActivity.this);
-								builder.setTitle("No network connection");
-								builder.setMessage("An Internet connection is needed. \nDo you want to retry?");
-								builder.setCancelable(false);
-								builder.setPositiveButton("Yes",
-										new DialogInterface.OnClickListener() {
-											@Override
-											public void onClick(
-													DialogInterface dialog,
-													int id) {
-												stopVm();
-											}
-										});
-								builder.setNegativeButton("No",
-										new DialogInterface.OnClickListener() {
-											@Override
-											public void onClick(
-													DialogInterface dialog,
-													int id) {
-												dialog.dismiss();
-											}
-										});
-								AlertDialog alertDialog = builder.create();
-								alertDialog.show();
-							}
-						});
+						showNoConnDialog();
 					}
 				}
 			}
@@ -370,49 +289,14 @@ public class VMStatsActivity extends Activity {
 	}
 
 	private void migrateVm() {
-		
-		// Migrate dialog
-		Dialog migrateDialog = new Dialog(getApplicationContext());
-		migrateDialog
-				.setContentView(R.layout.migrate_dialog_layout);
-		migrateDialog.setTitle("Migrate to");
-		Spinner nodeSpinner = (Spinner) findViewById(R.id.migrateNode_spinner);
-		final ArrayAdapter<String> nodesAdapter = new ArrayAdapter<String>(
-				VMStatsActivity.this,
-				android.R.layout.simple_spinner_item);
-		nodesAdapter
-				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		CheckBox onlineMigrateCheck = (CheckBox) findViewById(R.id.onlineMigrate_check);
-		
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
+					// Migrate request
 					ProxmoxCustomApp httpApp = (ProxmoxCustomApp) getApplication();
 					HttpClient migrateVmHttpClient = httpApp.getHttpClient();
-					
-					// Nodes list request
-					HttpGet nodesRequest = new HttpGet(server
-							+ "/api2/json/nodes");
-					nodesRequest.addHeader("Cookie", "PVEAuthCookie=" + ticket);
-					String nodesResponse = migrateVmHttpClient.execute(
-							nodesRequest, vmStatsResponseHandler);
-					JSONObject nodesObject = new JSONObject(nodesResponse);
-					JSONArray nodesArray = nodesObject.getJSONArray("data");
-					final int nodesArrayLength = nodesArray.length();
-					JSONObject singleNodeObject = new JSONObject();
-					for (int i = 0; i <= (nodesArrayLength - 1); i++) {
-						singleNodeObject = nodesArray.getJSONObject(i);
-						final String node = singleNodeObject.getString("node");
-						VMStatsActivity.this.runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								nodesAdapter.add(node);
-							}
-						});
-					}
-					
-					// Migrate request
+
 					HttpPost migrateVmRequest = new HttpPost();
 					URI vzStartUri = new URI(server + "/api2/json/nodes/"
 							+ node + "/openvz/" + vmid + "/migrate");
@@ -426,13 +310,34 @@ public class VMStatsActivity extends Activity {
 					List<NameValuePair> migrateVmParameters = new ArrayList<NameValuePair>();
 					migrateVmParameters.add(new BasicNameValuePair("target",
 							node_target));
+					if (online_migr == 1) {
+						migrateVmParameters.add(new BasicNameValuePair(
+								"online", "1"));
+					} else {
+						migrateVmParameters.add(new BasicNameValuePair(
+								"online", "0"));
+					}
 					HttpEntity migrateVmEntity = new UrlEncodedFormEntity(
 							migrateVmParameters);
 					migrateVmRequest.setEntity(migrateVmEntity);
 					migrateVmRequest.addHeader("Cookie", "PVEAuthCookie="
 							+ ticket);
 					migrateVmRequest.addHeader("CSRFPreventionToken", token);
-					migrateVmHttpClient.execute(migrateVmRequest);
+					String migrateResponse = migrateVmHttpClient.execute(
+							migrateVmRequest, vmStatsResponseHandler);
+					VMStatsActivity.this.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							Toast migrateVmToast = Toast.makeText(
+									VMStatsActivity.this, name
+											+ " migrate request sent",
+									Toast.LENGTH_SHORT);
+							migrateVmToast.show();
+							Intent nodesListIntent = new Intent(
+									VMStatsActivity.this, VMListActivity.class);
+							startActivity(nodesListIntent);
+						}
+					});
 				} catch (Exception e) {
 					if (e.getMessage() != null) {
 						Log.e(e.getClass().getName(), e.getMessage());
@@ -440,36 +345,7 @@ public class VMStatsActivity extends Activity {
 						Log.e(e.getClass().getName(), "No error message");
 					}
 					if (isOnline() == false) {
-						VMStatsActivity.this.runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								AlertDialog.Builder builder = new AlertDialog.Builder(
-										VMStatsActivity.this);
-								builder.setTitle("No network connection");
-								builder.setMessage("An Internet connection is needed. \nDo you want to retry?");
-								builder.setCancelable(false);
-								builder.setPositiveButton("Yes",
-										new DialogInterface.OnClickListener() {
-											@Override
-											public void onClick(
-													DialogInterface dialog,
-													int id) {
-												migrateVm();
-											}
-										});
-								builder.setNegativeButton("No",
-										new DialogInterface.OnClickListener() {
-											@Override
-											public void onClick(
-													DialogInterface dialog,
-													int id) {
-												dialog.dismiss();
-											}
-										});
-								AlertDialog alertDialog = builder.create();
-								alertDialog.show();
-							}
-						});
+						showNoConnDialog();
 					}
 				}
 			}
@@ -495,6 +371,7 @@ public class VMStatsActivity extends Activity {
 				public void run() {
 					AlertDialog.Builder builder = new AlertDialog.Builder(
 							VMStatsActivity.this);
+					builder.setCancelable(false);
 					builder.setMessage("Confirm starting of " + name + "?");
 					builder.setPositiveButton("Yes",
 							new DialogInterface.OnClickListener() {
@@ -523,6 +400,7 @@ public class VMStatsActivity extends Activity {
 				public void run() {
 					AlertDialog.Builder builder = new AlertDialog.Builder(
 							VMStatsActivity.this);
+					builder.setCancelable(false);
 					builder.setMessage("Do you really want to stop " + name
 							+ "?");
 					builder.setPositiveButton("Yes",
@@ -543,6 +421,150 @@ public class VMStatsActivity extends Activity {
 							});
 					AlertDialog alertDialog = builder.create();
 					alertDialog.show();
+				}
+			});
+			return true;
+		case R.id.migrateVmPref:
+			VMStatsActivity.this.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					final ArrayAdapter<String> nodesAdapter = new ArrayAdapter<String>(
+							VMStatsActivity.this,
+							android.R.layout.simple_spinner_item);
+					nodesAdapter
+							.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								ProxmoxCustomApp httpApp = (ProxmoxCustomApp) getApplication();
+								HttpClient nodesHttpClient = httpApp
+										.getHttpClient();
+
+								HttpGet nodesRequest = new HttpGet(server
+										+ "/api2/json/nodes");
+								nodesRequest.addHeader("Cookie",
+										"PVEAuthCookie=" + ticket);
+								String nodesResponse = nodesHttpClient.execute(
+										nodesRequest, vmStatsResponseHandler);
+								JSONObject nodesObject = new JSONObject(
+										nodesResponse);
+								JSONArray nodesArray = nodesObject
+										.getJSONArray("data");
+								final int nodesArrayLength = nodesArray
+										.length();
+								JSONObject singleNodeObject = new JSONObject();
+								for (int i = 0; i <= (nodesArrayLength - 1); i++) {
+									singleNodeObject = nodesArray
+											.getJSONObject(i);
+									final String nodeSpinnerItem = singleNodeObject
+											.getString("node");
+									if (!nodeSpinnerItem.equals(node)) {
+										VMStatsActivity.this
+												.runOnUiThread(new Runnable() {
+													@Override
+													public void run() {
+														nodesAdapter.add(node);
+													}
+												});
+									}
+								}
+							} catch (Exception e) {
+								if (e.getMessage() != null) {
+									Log.e(e.getClass().getName(),
+											e.getMessage());
+								} else {
+									Log.e(e.getClass().getName(),
+											"No error message");
+								}
+								if (isOnline() == false) {
+									showNoConnDialog();
+								}
+							}
+						}
+					}).start();
+
+					if (nodesAdapter.isEmpty()) {
+						AlertDialog.Builder builder = new AlertDialog.Builder(
+								VMStatsActivity.this);
+						builder.setCancelable(false);
+						builder.setMessage("No target nodes available");
+						builder.setNeutralButton("Ok",
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int id) {
+										dialog.dismiss();
+									}
+								});
+						AlertDialog alertDialog = builder.create();
+						alertDialog.show();
+					} else {
+						AlertDialog.Builder builder = new AlertDialog.Builder(
+								VMStatsActivity.this);
+						LayoutInflater migrateInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+						View migrateDialogLayout = migrateInflater.inflate(
+								R.layout.migrate_dialog_layout, null);
+						Spinner nodeSpinner = (Spinner) migrateDialogLayout
+								.findViewById(R.id.migrateNode_spinner);
+						nodeSpinner.setAdapter(nodesAdapter);
+
+						nodeSpinner
+								.setOnItemSelectedListener(new OnItemSelectedListener() {
+									@Override
+									public void onItemSelected(
+											AdapterView<?> parent, View view,
+											int pos, long id) {
+										node_target = (String) parent
+												.getSelectedItem();
+									}
+
+									@Override
+									public void onNothingSelected(
+											AdapterView<?> parent) {
+									}
+								});
+
+						CheckBox onlineMigrateCheck = (CheckBox) migrateDialogLayout
+								.findViewById(R.id.onlineMigrate_check);
+						onlineMigrateCheck
+								.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+									@Override
+									public void onCheckedChanged(
+											CompoundButton buttonView,
+											boolean isChecked) {
+										if (isChecked == true) {
+											online_migr = 1;
+										} else {
+											online_migr = 0;
+										}
+									}
+								});
+
+						builder.setPositiveButton("Ok",
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int id) {
+										migrateVm();
+									}
+								});
+
+						builder.setNegativeButton("Cancel",
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int id) {
+										dialog.dismiss();
+									}
+								});
+
+						builder.setTitle("Migrate to");
+						builder.setCancelable(false);
+						builder.setView(migrateDialogLayout);
+						AlertDialog migrateDialog = builder.create();
+						migrateDialog.show();
+					}
 				}
 			});
 			return true;
@@ -569,6 +591,28 @@ public class VMStatsActivity extends Activity {
 		}
 
 	};
+
+	private void showNoConnDialog() {
+		VMStatsActivity.this.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						VMStatsActivity.this);
+				builder.setTitle("No network connection");
+				builder.setMessage("An Internet connection is needed. Retry later.");
+				builder.setCancelable(false);
+				builder.setNeutralButton("Ok",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.dismiss();
+							}
+						});
+				AlertDialog alertDialog = builder.create();
+				alertDialog.show();
+			}
+		});
+	}
 
 	public boolean isOnline() {
 		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);

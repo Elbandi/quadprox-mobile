@@ -27,23 +27,23 @@
             android:textSize="23sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/clusterInfo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:ellipsize="end"
-            android:layout_alignLeft="@+id/logTitle"
-            android:layout_below="@+id/logTitle"
-            android:textSize="14sp" />
+<!--         <TextView -->
+<!--             android:id="@+id/clusterInfo" -->
+<!--             android:layout_width="wrap_content" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             android:singleLine="true" -->
+<!--             android:ellipsize="end" -->
+<!--             android:layout_alignLeft="@+id/logTitle" -->
+<!--             android:layout_below="@+id/logTitle" -->
+<!--             android:textSize="14sp" /> -->
 
         <TextView
             android:id="@+id/taskErrorsLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/logTitle"
-            android:layout_below="@+id/clusterInfo"
-            android:layout_marginTop="3dp"
+            android:layout_below="@+id/logTitle"
+            android:layout_marginTop="5dp"
             android:text="@string/errors_label"
             android:textSize="15sp"
             android:textStyle="bold" />
