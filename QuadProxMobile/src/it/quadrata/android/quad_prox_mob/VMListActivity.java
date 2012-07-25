@@ -69,7 +69,7 @@ public class VMListActivity extends Activity {
 	// VM info variables
 	final DecimalFormat cpu_dec_form = new DecimalFormat("#.#");
 	private static double vm_cpu;
-	private static int vm_mem;
+	private static long vm_mem;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -216,8 +216,8 @@ public class VMListActivity extends Activity {
 						item.vm_name = singleVzObject.getString("name");
 						vm_cpu = singleVzObject.getDouble("cpu");
 						item.vm_cpu = cpu_dec_form.format(vm_cpu) + "%";
-						vm_mem = singleVzObject.getInt("mem");
-						item.vm_mem = Integer.toString(vm_mem / 1048576) + "MB";
+						vm_mem = singleVzObject.getLong("mem");
+						item.vm_mem = Long.toString(vm_mem / 1048576) + "MB";
 						item.vm_type_icon = getResources().getDrawable(
 								R.drawable.ic_vm_type_vz);
 						item.vm_id = singleVzObject.getString("vmid");
@@ -262,8 +262,8 @@ public class VMListActivity extends Activity {
 						item.vm_name = singleQemuObject.getString("name");
 						vm_cpu = singleQemuObject.getDouble("cpu");
 						item.vm_cpu = cpu_dec_form.format(vm_cpu) + "%";
-						vm_mem = singleQemuObject.getInt("mem");
-						item.vm_mem = Integer.toString(vm_mem / 1048576) + "MB";
+						vm_mem = singleQemuObject.getLong("mem");
+						item.vm_mem = Long.toString(vm_mem / 1048576) + "MB";
 						item.vm_type_icon = getResources().getDrawable(
 								R.drawable.ic_vm_type_qm);
 						item.vm_id = singleQemuObject.getString("vmid");

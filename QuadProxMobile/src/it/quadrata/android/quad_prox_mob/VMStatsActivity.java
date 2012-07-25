@@ -60,8 +60,8 @@ public class VMStatsActivity extends Activity {
 	private static int num_cpu;
 	private static double cpu_usage_double;
 	private static String cpu_usage;
-	private static int max_mem;
-	private static int mem_usage;
+	private static long max_mem;
+	private static long mem_usage;
 	private static int uptime;
 	private static int uptime_d;
 	private static int uptime_h;
@@ -75,6 +75,7 @@ public class VMStatsActivity extends Activity {
 	private static int DAY = HOUR * 24;
 
 	// Migrate variables
+	private static ArrayList<String> nodes_list = new ArrayList<String>();
 	private static String node_target;
 	private static int online_migr;
 
@@ -93,6 +94,7 @@ public class VMStatsActivity extends Activity {
 		type = vmStatsIntent.getStringExtra("type");
 
 		updateVmStats();
+		getNodesList();
 	}
 
 	private void updateVmStats() {
@@ -135,8 +137,8 @@ public class VMStatsActivity extends Activity {
 					cpu_usage_double = statsData.getDouble("cpu") * 100;
 					DecimalFormat cpu_dec_form = new DecimalFormat("#.#");
 					cpu_usage = cpu_dec_form.format(cpu_usage_double);
-					max_mem = statsData.getInt("maxmem");
-					mem_usage = statsData.getInt("mem");
+					max_mem = statsData.getLong("maxmem");
+					mem_usage = statsData.getLong("mem");
 					uptime = statsData.getInt("uptime");
 					uptime_d = uptime / DAY;
 					uptime_h = (uptime - (uptime_d * DAY)) / HOUR;
@@ -333,9 +335,35 @@ public class VMStatsActivity extends Activity {
 											+ " migrate request sent",
 									Toast.LENGTH_SHORT);
 							migrateVmToast.show();
-							Intent nodesListIntent = new Intent(
-									VMStatsActivity.this, VMListActivity.class);
-							startActivity(nodesListIntent);
+							AlertDialog.Builder builder = new AlertDialog.Builder(
+									VMStatsActivity.this);
+							builder.setCancelable(false);
+							builder.setMessage("Do you want to check logs?");
+							builder.setPositiveButton("Yes",
+									new DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(
+												DialogInterface dialog, int id) {
+											Intent logIntent = new Intent(VMStatsActivity.this,
+													ClusterLogActivity.class);
+											logIntent.putExtra("server", server);
+											logIntent.putExtra("ticket", ticket);
+											startActivity(logIntent);
+										}
+									});
+							builder.setNegativeButton("No",
+									new DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(
+												DialogInterface dialog, int id) {
+											Intent nodesListIntent = new Intent(
+													VMStatsActivity.this,
+													NodeListActivity.class);
+											startActivity(nodesListIntent);
+										}
+									});
+							AlertDialog alertDialog = builder.create();
+							alertDialog.show();
 						}
 					});
 				} catch (Exception e) {
@@ -430,59 +458,9 @@ public class VMStatsActivity extends Activity {
 				public void run() {
 					final ArrayAdapter<String> nodesAdapter = new ArrayAdapter<String>(
 							VMStatsActivity.this,
-							android.R.layout.simple_spinner_item);
+							android.R.layout.simple_spinner_item, nodes_list);
 					nodesAdapter
 							.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-					new Thread(new Runnable() {
-						@Override
-						public void run() {
-							try {
-								ProxmoxCustomApp httpApp = (ProxmoxCustomApp) getApplication();
-								HttpClient nodesHttpClient = httpApp
-										.getHttpClient();
-
-								HttpGet nodesRequest = new HttpGet(server
-										+ "/api2/json/nodes");
-								nodesRequest.addHeader("Cookie",
-										"PVEAuthCookie=" + ticket);
-								String nodesResponse = nodesHttpClient.execute(
-										nodesRequest, vmStatsResponseHandler);
-								JSONObject nodesObject = new JSONObject(
-										nodesResponse);
-								JSONArray nodesArray = nodesObject
-										.getJSONArray("data");
-								final int nodesArrayLength = nodesArray
-										.length();
-								JSONObject singleNodeObject = new JSONObject();
-								for (int i = 0; i <= (nodesArrayLength - 1); i++) {
-									singleNodeObject = nodesArray
-											.getJSONObject(i);
-									final String nodeSpinnerItem = singleNodeObject
-											.getString("node");
-									if (!nodeSpinnerItem.equals(node)) {
-										VMStatsActivity.this
-												.runOnUiThread(new Runnable() {
-													@Override
-													public void run() {
-														nodesAdapter.add(node);
-													}
-												});
-									}
-								}
-							} catch (Exception e) {
-								if (e.getMessage() != null) {
-									Log.e(e.getClass().getName(),
-											e.getMessage());
-								} else {
-									Log.e(e.getClass().getName(),
-											"No error message");
-								}
-								if (isOnline() == false) {
-									showNoConnDialog();
-								}
-							}
-						}
-					}).start();
 
 					if (nodesAdapter.isEmpty()) {
 						AlertDialog.Builder builder = new AlertDialog.Builder(
@@ -577,6 +555,45 @@ public class VMStatsActivity extends Activity {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	private void getNodesList() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					ProxmoxCustomApp httpApp = (ProxmoxCustomApp) getApplication();
+					HttpClient nodesHttpClient = httpApp.getHttpClient();
+
+					HttpGet nodesRequest = new HttpGet(server
+							+ "/api2/json/nodes");
+					nodesRequest.addHeader("Cookie", "PVEAuthCookie=" + ticket);
+					String nodesResponse = nodesHttpClient.execute(
+							nodesRequest, vmStatsResponseHandler);
+					JSONObject nodesObject = new JSONObject(nodesResponse);
+					JSONArray nodesArray = nodesObject.getJSONArray("data");
+					final int nodesArrayLength = nodesArray.length();
+					JSONObject singleNodeObject = new JSONObject();
+					for (int i = 0; i <= (nodesArrayLength - 1); i++) {
+						singleNodeObject = nodesArray.getJSONObject(i);
+						final String nodeSpinnerItem = singleNodeObject
+								.getString("node");
+						if (!nodeSpinnerItem.equals(node)) {
+							nodes_list.add(nodeSpinnerItem);
+						}
+					}
+				} catch (Exception e) {
+					if (e.getMessage() != null) {
+						Log.e(e.getClass().getName(), e.getMessage());
+					} else {
+						Log.e(e.getClass().getName(), "No error message");
+					}
+					if (isOnline() == false) {
+						showNoConnDialog();
+					}
+				}
+			}
+		}).start();
 	}
 
 	private final ResponseHandler<String> vmStatsResponseHandler = new ResponseHandler<String>() {

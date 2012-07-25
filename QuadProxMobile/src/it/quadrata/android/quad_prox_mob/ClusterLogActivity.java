@@ -44,7 +44,7 @@ public class ClusterLogActivity extends Activity {
 	private static String ticket;
 
 	// Cluster info
-//	private static String cluster;
+	// private static String cluster;
 
 	// Log variables
 	private static int errors;
@@ -73,7 +73,8 @@ public class ClusterLogActivity extends Activity {
 
 	private void buildLogList() {
 		// Logs header views
-//		final TextView clusterInfoText = (TextView) findViewById(R.id.clusterInfo);
+		// final TextView clusterInfoText = (TextView)
+		// findViewById(R.id.clusterInfo);
 		final TextView taskErrorsText = (TextView) findViewById(R.id.taskErrors);
 		errors = 0;
 
@@ -138,13 +139,13 @@ public class ClusterLogActivity extends Activity {
 					JSONObject logObject = new JSONObject(logResponse);
 					JSONArray logJsonArray = logObject.getJSONArray("data");
 					final int logJsonArrayLenght = logJsonArray.length();
-//					cluster = server.substring(8, server.length() - 5);
-//					clusterInfoText.post(new Runnable() {
-//						@Override
-//						public void run() {
-//							clusterInfoText.setText(cluster);
-//						}
-//					});
+					// cluster = server.substring(8, server.length() - 5);
+					// clusterInfoText.post(new Runnable() {
+					// @Override
+					// public void run() {
+					// clusterInfoText.setText(cluster);
+					// }
+					// });
 
 					// Log list items creation
 					JSONObject singleTaskObject = new JSONObject();
@@ -164,7 +165,10 @@ public class ClusterLogActivity extends Activity {
 									timeStop * 1000));
 						}
 						item.task_type = singleTaskObject.getString("type");
-						item.task_id = singleTaskObject.optString("id", "#");
+						item.task_id = singleTaskObject.optString("id");
+						if (item.task_id.equals("")) {
+							item.task_id = "###";
+						}
 						item.task_node = singleTaskObject.getString("node");
 						item.task_user = singleTaskObject.getString("user");
 						status = singleTaskObject.optString("status");

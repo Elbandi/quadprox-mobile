@@ -320,7 +320,7 @@ public class NodeListActivity extends Activity {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						NodeListActivity.this);
 				builder.setTitle("Unable to authenticate");
-				builder.setMessage("Wrong authentication data. \nDo you want to review it?");
+				builder.setMessage("Do you want to review authentication data?");
 				builder.setCancelable(false);
 				builder.setPositiveButton("Yes",
 						new DialogInterface.OnClickListener() {
@@ -332,6 +332,12 @@ public class NodeListActivity extends Activity {
 								startActivityForResult(loginIntent, 0);
 							}
 						});
+				builder.setNeutralButton("Retry", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int id) {
+						buildNodeList();
+					}
+				});
 				builder.setNegativeButton("No",
 						new DialogInterface.OnClickListener() {
 							@Override
@@ -377,7 +383,8 @@ public class NodeListActivity extends Activity {
 	public boolean isOnline() {
 		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-		return (networkInfo != null && networkInfo.isConnected() && !networkInfo.isFailover());
+		return (networkInfo != null && networkInfo.isConnected() && !networkInfo
+				.isFailover());
 	}
 
 }

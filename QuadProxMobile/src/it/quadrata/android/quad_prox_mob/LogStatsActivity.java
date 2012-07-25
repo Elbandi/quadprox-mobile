@@ -43,7 +43,6 @@ public class LogStatsActivity extends Activity {
 	private static String user;
 	private static String start;
 	private static String upid;
-	private static String progressRow;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -76,6 +75,31 @@ public class LogStatsActivity extends Activity {
 					ProxmoxCustomApp httpApp = (ProxmoxCustomApp) getApplication();
 					HttpClient taskHttpClient = httpApp.getHttpClient();
 
+					// Task progress request
+					HttpGet taskProgressRequest = new HttpGet();
+					URI taskProgressUri = new URI(server + "/api2/json/nodes/"
+							+ node + "/tasks/" + upid + "/log");
+					taskProgressRequest.setURI(taskProgressUri);
+					taskProgressRequest.addHeader("Cookie", "PVEAuthCookie="
+							+ ticket);
+					String progressJson = taskHttpClient.execute(
+							taskProgressRequest, taskResponseHandler);
+					JSONObject progressObject = new JSONObject(progressJson);
+					JSONArray progressArray = progressObject
+							.getJSONArray("data");
+					final int progressArrayLenght = progressArray.length();
+					JSONObject progressRowObject = new JSONObject();
+					for (int i = 0; i <= (progressArrayLenght - 1); i++) {
+						progressRowObject = progressArray.getJSONObject(i);
+						final String progressRow = progressRowObject.getString("t");
+						taskProgressText.post(new Runnable() {
+							@Override
+							public void run() {
+								taskProgressText.append(progressRow + "\n\n");
+							}
+						});
+					}
+					
 					// Task status request
 					HttpGet taskStatusRequest = new HttpGet();
 					URI taskStatusUri = new URI(server + "/api2/json/nodes/"
@@ -87,7 +111,10 @@ public class LogStatsActivity extends Activity {
 							taskStatusRequest, taskResponseHandler);
 					JSONObject statusObject = new JSONObject(statusJson);
 					JSONObject statusData = statusObject.getJSONObject("data");
-					id = statusData.optString("id", "#");
+					id = statusData.optString("id");
+					if (id.equals("")) {
+						id = "###";
+					}
 					type = statusData.getString("type");
 					node = statusData.getString("node");
 					status = statusData.getString("status");
@@ -106,30 +133,7 @@ public class LogStatsActivity extends Activity {
 						}
 					});
 
-					// Task progress request
-					HttpGet taskProgressRequest = new HttpGet();
-					URI taskProgressUri = new URI(server + "/api2/json/nodes/"
-							+ node + "/tasks/" + upid + "/log");
-					taskProgressRequest.setURI(taskProgressUri);
-					taskProgressRequest.addHeader("Cookie", "PVEAuthCookie="
-							+ ticket);
-					String progressJson = taskHttpClient.execute(
-							taskProgressRequest, taskResponseHandler);
-					JSONObject progressObject = new JSONObject(progressJson);
-					JSONArray progressArray = progressObject
-							.getJSONArray("data");
-					final int progressArrayLenght = progressArray.length();
-					JSONObject progressRowObject = new JSONObject();
-					for (int i = 0; i <= (progressArrayLenght - 1); i++) {
-						progressRowObject = progressArray.getJSONObject(i);
-						progressRow = progressRowObject.getString("t");
-						LogStatsActivity.this.runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								taskProgressText.append(progressRow + "\n\n");
-							}
-						});
-					}
+								
 				} catch (Exception e) {
 					if (e.getMessage() != null) {
 						Log.e(e.getClass().getName(), e.getMessage());
