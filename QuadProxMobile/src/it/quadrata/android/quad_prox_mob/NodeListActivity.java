@@ -134,6 +134,9 @@ public class NodeListActivity extends Activity {
 			@Override
 			public void run() {
 				try {
+					if (isOnline() == false) {
+						throw new Exception();
+					}
 					ProxmoxCustomApp httpApp = (ProxmoxCustomApp) getApplication();
 					HttpClient serverHttpClient = httpApp.getHttpClient();
 
@@ -167,12 +170,12 @@ public class NodeListActivity extends Activity {
 					JSONObject versionObject = new JSONObject(versionResponse);
 					JSONObject versionDataObject = versionObject
 							.getJSONObject("data");
-					cluster = server.substring(8, server.length() - 5);
 					version = versionDataObject.getString("version");
 					release = versionDataObject.getString("release");
 					clusterVers.post(new Runnable() {
 						@Override
 						public void run() {
+							cluster = server.substring(8, server.length() - 5);
 							clusterInfo.setText(cluster);
 							clusterVers.setText("Proxmox VE " + version + "-"
 									+ release);
@@ -227,13 +230,9 @@ public class NodeListActivity extends Activity {
 					if (e.getMessage() != null) {
 						Log.e(e.getClass().getName(), e.getMessage());
 					} else {
-						Log.e(e.getClass().getName(), "No error message");
+						Log.e(e.getClass().getName(), "null");
 					}
-					if (isOnline() == false) {
-						showNoConnDialog();
-					} else {
-						showWrongDataDialog();
-					}
+					showErrorDialog();
 				}
 			}
 		}).start();
@@ -313,16 +312,16 @@ public class NodeListActivity extends Activity {
 
 	};
 
-	private void showWrongDataDialog() {
+	private void showErrorDialog() {
 		NodeListActivity.this.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						NodeListActivity.this);
-				builder.setTitle("Unable to authenticate");
-				builder.setMessage("Do you want to review authentication data?");
+				builder.setTitle("Unable to connect");
+				builder.setMessage("Do you want to retry or review authentication data?");
 				builder.setCancelable(false);
-				builder.setPositiveButton("Yes",
+				builder.setNeutralButton("Check",
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
@@ -332,42 +331,14 @@ public class NodeListActivity extends Activity {
 								startActivityForResult(loginIntent, 0);
 							}
 						});
-				builder.setNeutralButton("Retry", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int id) {
-						buildNodeList();
-					}
-				});
-				builder.setNegativeButton("No",
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int id) {
-								NodeListActivity.this.finish();
-							}
-						});
-				AlertDialog alertDialog = builder.create();
-				alertDialog.show();
-			}
-		});
-	}
-
-	private void showNoConnDialog() {
-		NodeListActivity.this.runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				AlertDialog.Builder builder = new AlertDialog.Builder(
-						NodeListActivity.this);
-				builder.setTitle("No network connection");
-				builder.setMessage("An Internet connection is needed. \nDo you want to retry?");
-				builder.setCancelable(false);
-				builder.setPositiveButton("Yes",
+				builder.setNeutralButton("Retry",
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
 								buildNodeList();
 							}
 						});
-				builder.setNegativeButton("No",
+				builder.setNeutralButton("Quit",
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {

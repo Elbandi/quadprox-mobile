@@ -127,6 +127,9 @@ public class ClusterLogActivity extends Activity {
 			@Override
 			public void run() {
 				try {
+					if (isOnline() == false) {
+						throw new Exception();
+					}
 					ProxmoxCustomApp httpApp = (ProxmoxCustomApp) getApplication();
 					HttpClient logHttpClient = httpApp.getHttpClient();
 
@@ -202,9 +205,7 @@ public class ClusterLogActivity extends Activity {
 					} else {
 						Log.e(e.getClass().getName(), "No error message");
 					}
-					if (isOnline() == false) {
-						showNoConnDialog();
-					}
+					showNoConnDialog();
 				}
 			}
 		}).start();
@@ -286,8 +287,8 @@ public class ClusterLogActivity extends Activity {
 			public void run() {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						ClusterLogActivity.this);
-				builder.setTitle("No network connection");
-				builder.setMessage("An Internet connection is needed. \nDo you want to retry?");
+				builder.setTitle("Unable to connect");
+				builder.setMessage("Do you want to retry?");
 				builder.setCancelable(false);
 				builder.setPositiveButton("Yes",
 						new DialogInterface.OnClickListener() {

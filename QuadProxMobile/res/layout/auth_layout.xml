@@ -92,7 +92,8 @@
             android:layout_alignLeft="@+id/usernameInput"
             android:layout_alignRight="@+id/usernameInput"
             android:layout_below="@+id/usernameInput"
-            android:hint="@string/realm_hint" />
+            android:hint="@string/realm_hint"
+            android:singleLine="true" />
 
         <TextView
             android:id="@+id/realmLabel"

@@ -94,7 +94,10 @@ public class VMStatsActivity extends Activity {
 		type = vmStatsIntent.getStringExtra("type");
 
 		updateVmStats();
-		getNodesList();
+		
+		// Migrate nodes list retrieving
+		nodes_list.clear();
+		getTargetNodesList();
 	}
 
 	private void updateVmStats() {
@@ -111,6 +114,9 @@ public class VMStatsActivity extends Activity {
 			@Override
 			public void run() {
 				try {
+					if (isOnline() == false) {
+						throw new Exception();
+					}
 					ProxmoxCustomApp httpApp = (ProxmoxCustomApp) getApplication();
 					HttpClient updateVmHttpClient = httpApp.getHttpClient();
 
@@ -186,9 +192,7 @@ public class VMStatsActivity extends Activity {
 					} else {
 						Log.e(e.getClass().getName(), "No error message");
 					}
-					if (isOnline() == false) {
-						showNoConnDialog();
-					}
+					showErrorDialog();
 				}
 			}
 		}).start();
@@ -199,6 +203,9 @@ public class VMStatsActivity extends Activity {
 			@Override
 			public void run() {
 				try {
+					if (isOnline() == false) {
+						throw new Exception();
+					}
 					ProxmoxCustomApp httpApp = (ProxmoxCustomApp) getApplication();
 					HttpClient startVmHttpClient = httpApp.getHttpClient();
 					HttpPost startVmRequest = new HttpPost();
@@ -234,9 +241,7 @@ public class VMStatsActivity extends Activity {
 					} else {
 						Log.e(e.getClass().getName(), "No error message");
 					}
-					if (isOnline() == false) {
-						showNoConnDialog();
-					}
+					showErrorDialog();
 				}
 			}
 		}).start();
@@ -247,6 +252,9 @@ public class VMStatsActivity extends Activity {
 			@Override
 			public void run() {
 				try {
+					if (isOnline() == false) {
+						throw new Exception();
+					}
 					ProxmoxCustomApp httpApp = (ProxmoxCustomApp) getApplication();
 					HttpClient stopVmHttpClient = httpApp.getHttpClient();
 					HttpPost stopVmRequest = new HttpPost();
@@ -282,9 +290,7 @@ public class VMStatsActivity extends Activity {
 					} else {
 						Log.e(e.getClass().getName(), "No error message");
 					}
-					if (isOnline() == false) {
-						showNoConnDialog();
-					}
+					showErrorDialog();
 				}
 			}
 		}).start();
@@ -295,7 +301,9 @@ public class VMStatsActivity extends Activity {
 			@Override
 			public void run() {
 				try {
-					// Migrate request
+					if (isOnline() == false) {
+						throw new Exception();
+					}
 					ProxmoxCustomApp httpApp = (ProxmoxCustomApp) getApplication();
 					HttpClient migrateVmHttpClient = httpApp.getHttpClient();
 
@@ -344,10 +352,14 @@ public class VMStatsActivity extends Activity {
 										@Override
 										public void onClick(
 												DialogInterface dialog, int id) {
-											Intent logIntent = new Intent(VMStatsActivity.this,
+											VMStatsActivity.this.finish();
+											Intent logIntent = new Intent(
+													VMStatsActivity.this,
 													ClusterLogActivity.class);
-											logIntent.putExtra("server", server);
-											logIntent.putExtra("ticket", ticket);
+											logIntent
+													.putExtra("server", server);
+											logIntent
+													.putExtra("ticket", ticket);
 											startActivity(logIntent);
 										}
 									});
@@ -356,10 +368,7 @@ public class VMStatsActivity extends Activity {
 										@Override
 										public void onClick(
 												DialogInterface dialog, int id) {
-											Intent nodesListIntent = new Intent(
-													VMStatsActivity.this,
-													NodeListActivity.class);
-											startActivity(nodesListIntent);
+											VMStatsActivity.this.finish();
 										}
 									});
 							AlertDialog alertDialog = builder.create();
@@ -372,9 +381,7 @@ public class VMStatsActivity extends Activity {
 					} else {
 						Log.e(e.getClass().getName(), "No error message");
 					}
-					if (isOnline() == false) {
-						showNoConnDialog();
-					}
+					showErrorDialog();
 				}
 			}
 		}).start();
@@ -557,11 +564,14 @@ public class VMStatsActivity extends Activity {
 		}
 	}
 
-	private void getNodesList() {
+	private void getTargetNodesList() {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
+					if (isOnline() == false) {
+						throw new Exception();
+					}
 					ProxmoxCustomApp httpApp = (ProxmoxCustomApp) getApplication();
 					HttpClient nodesHttpClient = httpApp.getHttpClient();
 
@@ -588,9 +598,7 @@ public class VMStatsActivity extends Activity {
 					} else {
 						Log.e(e.getClass().getName(), "No error message");
 					}
-					if (isOnline() == false) {
-						showNoConnDialog();
-					}
+					showErrorDialog();
 				}
 			}
 		}).start();
@@ -609,14 +617,14 @@ public class VMStatsActivity extends Activity {
 
 	};
 
-	private void showNoConnDialog() {
+	private void showErrorDialog() {
 		VMStatsActivity.this.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						VMStatsActivity.this);
-				builder.setTitle("No network connection");
-				builder.setMessage("An Internet connection is needed. Retry later.");
+				builder.setTitle("Unable to connect");
+				builder.setMessage("Retry later.");
 				builder.setCancelable(false);
 				builder.setNeutralButton("Ok",
 						new DialogInterface.OnClickListener() {

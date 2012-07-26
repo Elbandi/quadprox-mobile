@@ -148,6 +148,9 @@ public class VMListActivity extends Activity {
 			@Override
 			public void run() {
 				try {
+					if (isOnline() == false) {
+						throw new Exception();
+					}
 					ProxmoxCustomApp httpApp = (ProxmoxCustomApp) getApplication();
 					HttpClient serverHttpClient = httpApp.getHttpClient();
 
@@ -291,7 +294,7 @@ public class VMListActivity extends Activity {
 						Log.e(e.getClass().getName(), "No error message");
 					}
 					if (isOnline() == false) {
-						showNoConnDialog();
+						showErrorDialog();
 					}
 				}
 			}
@@ -376,14 +379,14 @@ public class VMListActivity extends Activity {
 
 	};
 
-	private void showNoConnDialog() {
+	private void showErrorDialog() {
 		VMListActivity.this.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						VMListActivity.this);
-				builder.setTitle("No network connection");
-				builder.setMessage("An Internet connection is needed. \nDo you want to retry?");
+				builder.setTitle("Unable to connect");
+				builder.setMessage("Do you want to retry?");
 				builder.setCancelable(false);
 				builder.setPositiveButton("Yes",
 						new DialogInterface.OnClickListener() {
