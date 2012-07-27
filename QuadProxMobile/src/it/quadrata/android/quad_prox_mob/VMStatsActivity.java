@@ -1,8 +1,6 @@
 package it.quadrata.android.quad_prox_mob;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -132,7 +130,7 @@ public class VMStatsActivity extends Activity {
 					vmStatsRequest.addHeader("Cookie", "PVEAuthCookie="
 							+ ticket);
 					String statsJson = updateVmHttpClient.execute(
-							vmStatsRequest, vmStatsResponseHandler);
+							vmStatsRequest, vmStatsResponseHandler).entity_content;
 					JSONObject statsObject = new JSONObject(statsJson);
 					JSONObject statsData = statsObject.getJSONObject("data");
 					name = statsData.getString("name");
@@ -165,7 +163,7 @@ public class VMStatsActivity extends Activity {
 					notesVmRequest.addHeader("Cookie", "PVEAuthCookie="
 							+ ticket);
 					String notesJson = updateVmHttpClient.execute(
-							notesVmRequest, vmStatsResponseHandler);
+							notesVmRequest, vmStatsResponseHandler).entity_content;
 					JSONObject notesObject = new JSONObject(notesJson);
 					JSONObject notesData = notesObject.getJSONObject("data");
 					notes = notesData.optString("description");
@@ -191,7 +189,7 @@ public class VMStatsActivity extends Activity {
 							+ "/api2/json/nodes");
 					nodesRequest.addHeader("Cookie", "PVEAuthCookie=" + ticket);
 					String nodesResponse = updateVmHttpClient.execute(
-							nodesRequest, vmStatsResponseHandler);
+							nodesRequest, vmStatsResponseHandler).entity_content;
 					JSONObject nodesObject = new JSONObject(nodesResponse);
 					JSONArray nodesArray = nodesObject.getJSONArray("data");
 					final int nodesArrayLength = nodesArray.length();
@@ -241,7 +239,7 @@ public class VMStatsActivity extends Activity {
 							+ ticket);
 					startVmRequest.addHeader("CSRFPreventionToken", token);
 					String startResponse = startVmHttpClient.execute(
-							startVmRequest, vmStatsResponseHandler);
+							startVmRequest, vmStatsResponseHandler).entity_content;
 					VMStatsActivity.this.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
@@ -291,7 +289,7 @@ public class VMStatsActivity extends Activity {
 							.addHeader("Cookie", "PVEAuthCookie=" + ticket);
 					stopVmRequest.addHeader("CSRFPreventionToken", token);
 					String stopResponse = stopVmHttpClient.execute(
-							stopVmRequest, vmStatsResponseHandler);
+							stopVmRequest, vmStatsResponseHandler).entity_content;
 					VMStatsActivity.this.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
@@ -351,54 +349,92 @@ public class VMStatsActivity extends Activity {
 					migrateVmRequest.addHeader("Cookie", "PVEAuthCookie="
 							+ ticket);
 					migrateVmRequest.addHeader("CSRFPreventionToken", token);
-					HttpResponse migrateResponse = migrateVmHttpClient
-							.execute(migrateVmRequest);
-					HttpEntity migrateEntity = migrateResponse.getEntity();
-					String migrateContent = EntityUtils.toString(migrateEntity);
-					String migrateStatusCode = Integer.toString(migrateResponse
-							.getStatusLine().getStatusCode());
-					String migrateStatusReason = migrateResponse
-							.getStatusLine().getReasonPhrase();
-					VMStatsActivity.this.runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							Toast migrateVmToast = Toast.makeText(
-									VMStatsActivity.this, name
-											+ " migrate request sent",
-									Toast.LENGTH_SHORT);
-							migrateVmToast.show();
-							AlertDialog.Builder builder = new AlertDialog.Builder(
-									VMStatsActivity.this);
-							builder.setCancelable(false);
-							builder.setMessage("Do you want to check logs?");
-							builder.setPositiveButton("Yes",
-									new DialogInterface.OnClickListener() {
-										@Override
-										public void onClick(
-												DialogInterface dialog, int id) {
-											VMStatsActivity.this.finish();
-											Intent logIntent = new Intent(
-													VMStatsActivity.this,
-													ClusterLogActivity.class);
-											logIntent
-													.putExtra("server", server);
-											logIntent
-													.putExtra("ticket", ticket);
-											startActivity(logIntent);
-										}
-									});
-							builder.setNegativeButton("No",
-									new DialogInterface.OnClickListener() {
-										@Override
-										public void onClick(
-												DialogInterface dialog, int id) {
-											VMStatsActivity.this.finish();
-										}
-									});
-							AlertDialog alertDialog = builder.create();
-							alertDialog.show();
-						}
-					});
+					final ResponseObject migrateResponse = migrateVmHttpClient
+							.execute(migrateVmRequest, vmStatsResponseHandler);
+					String migrateContent = migrateResponse.entity_content
+							.substring(migrateResponse.entity_content
+									.indexOf("{"));
+					JSONObject contentObj = new JSONObject(migrateContent);
+					final String contentData = contentObj.optString("data",
+							"null");
+					if (migrateResponse.status_code != 200) {
+						char[] status_reason_array = migrateResponse.status_reason
+								.toCharArray();
+						status_reason_array[0] = Character
+								.toUpperCase(status_reason_array[0]);
+						final String status_reason = new String(
+								status_reason_array);
+						VMStatsActivity.this.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								AlertDialog.Builder builder = new AlertDialog.Builder(
+										VMStatsActivity.this);
+								builder.setCancelable(false);
+								builder.setTitle("Http error "
+										+ Integer
+												.toString(migrateResponse.status_code));
+								builder.setMessage(status_reason + ".");
+								builder.setNeutralButton("Ok",
+										new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(
+													DialogInterface dialog,
+													int id) {
+												dialog.dismiss();
+											}
+										});
+								AlertDialog alertDialog = builder.create();
+								alertDialog.show();
+							}
+						});
+					} else {
+						VMStatsActivity.this.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								Toast migrateVmToast = Toast.makeText(
+										VMStatsActivity.this, name
+												+ " migrate request sent",
+										Toast.LENGTH_SHORT);
+								migrateVmToast.show();
+								AlertDialog.Builder builder = new AlertDialog.Builder(
+										VMStatsActivity.this);
+								builder.setCancelable(false);
+								builder.setMessage("Do you want to check progress?");
+								builder.setPositiveButton("Yes",
+										new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(
+													DialogInterface dialog,
+													int id) {
+												VMStatsActivity.this.finish();
+												Intent logIntent = new Intent(
+														VMStatsActivity.this,
+														LogStatsActivity.class);
+												logIntent.putExtra("server",
+														server);
+												logIntent.putExtra("ticket",
+														ticket);
+												logIntent
+														.putExtra("node", node);
+												logIntent.putExtra("upid",
+														contentData);
+												startActivity(logIntent);
+											}
+										});
+								builder.setNegativeButton("No",
+										new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(
+													DialogInterface dialog,
+													int id) {
+												VMStatsActivity.this.finish();
+											}
+										});
+								AlertDialog alertDialog = builder.create();
+								alertDialog.show();
+							}
+						});
+					}
 				} catch (Exception e) {
 					if (e.getMessage() != null) {
 						Log.e(e.getClass().getName(), e.getMessage());
@@ -594,15 +630,24 @@ public class VMStatsActivity extends Activity {
 		}
 	}
 
-	private final ResponseHandler<String> vmStatsResponseHandler = new ResponseHandler<String>() {
+	private static class ResponseObject {
+		public String entity_content;
+		public int status_code;
+		public String status_reason;
+	}
+
+	private final ResponseHandler<ResponseObject> vmStatsResponseHandler = new ResponseHandler<ResponseObject>() {
 
 		@Override
-		public String handleResponse(HttpResponse response)
+		public ResponseObject handleResponse(HttpResponse response)
 				throws ClientProtocolException, IOException {
-			HttpEntity entity = response.getEntity();
-			String result = EntityUtils.toString(entity);
 
-			return result;
+			ResponseObject object = new ResponseObject();
+			object.entity_content = EntityUtils.toString(response.getEntity());
+			object.status_code = response.getStatusLine().getStatusCode();
+			object.status_reason = response.getStatusLine().getReasonPhrase();
+
+			return object;
 		}
 
 	};
