@@ -142,13 +142,6 @@ public class ClusterLogActivity extends Activity {
 					JSONObject logObject = new JSONObject(logResponse);
 					JSONArray logJsonArray = logObject.getJSONArray("data");
 					final int logJsonArrayLenght = logJsonArray.length();
-					// cluster = server.substring(8, server.length() - 5);
-					// clusterInfoText.post(new Runnable() {
-					// @Override
-					// public void run() {
-					// clusterInfoText.setText(cluster);
-					// }
-					// });
 
 					// Log list items creation
 					JSONObject singleTaskObject = new JSONObject();
@@ -203,9 +196,9 @@ public class ClusterLogActivity extends Activity {
 					if (e.getMessage() != null) {
 						Log.e(e.getClass().getName(), e.getMessage());
 					} else {
-						Log.e(e.getClass().getName(), "No error message");
+						Log.e(e.getClass().getName(), "null");
 					}
-					showNoConnDialog();
+					showErrorDialog();
 				}
 			}
 		}).start();
@@ -281,14 +274,14 @@ public class ClusterLogActivity extends Activity {
 
 	};
 
-	private void showNoConnDialog() {
+	private void showErrorDialog() {
 		ClusterLogActivity.this.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						ClusterLogActivity.this);
-				builder.setTitle("Unable to connect");
-				builder.setMessage("Do you want to retry?");
+				builder.setTitle("Connection error");
+				builder.setMessage("Unable to connect. \nDo you want to retry?");
 				builder.setCancelable(false);
 				builder.setPositiveButton("Yes",
 						new DialogInterface.OnClickListener() {
@@ -313,8 +306,7 @@ public class ClusterLogActivity extends Activity {
 	public boolean isOnline() {
 		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-		return (networkInfo != null && networkInfo.isConnected() && !networkInfo
-				.isFailover());
+		return (networkInfo != null && networkInfo.isConnected());
 	}
 
 }

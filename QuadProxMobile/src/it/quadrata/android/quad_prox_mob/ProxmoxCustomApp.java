@@ -10,6 +10,7 @@ import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
@@ -78,8 +79,11 @@ public class ProxmoxCustomApp extends Application {
 			schemeRegistry.register(httpsScheme);
 			ClientConnectionManager connManager = new ThreadSafeClientConnManager(
 					httpParams, schemeRegistry);
-			HttpClient tmpClient = new DefaultHttpClient(connManager,
+			DefaultHttpClient tmpClient = new DefaultHttpClient(connManager,
 					httpParams);
+			tmpClient
+					.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(
+							5, false));
 			Log.i(LOG_TAG, "HttpClient created!");
 			return tmpClient;
 		} catch (Exception e) {

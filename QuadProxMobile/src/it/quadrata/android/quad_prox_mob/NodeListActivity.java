@@ -16,6 +16,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -50,8 +51,8 @@ public class NodeListActivity extends Activity {
 	private static String ticket;
 	private static String token;
 
-	// Cluster info
-	private static String cluster;
+	// Host info
+	private static String host;
 	private static String version;
 	private static String release;
 
@@ -94,9 +95,9 @@ public class NodeListActivity extends Activity {
 
 	private void buildNodeList() {
 		// Cluster header views
-		final TextView clusterInfo = (TextView) findViewById(R.id.clusterInfo);
-		final TextView clusterVers = (TextView) findViewById(R.id.clusterVers);
-		final TextView clusterNodes = (TextView) findViewById(R.id.clusterNodes);
+		final TextView hostInfo = (TextView) findViewById(R.id.hostInfo);
+		final TextView hostVers = (TextView) findViewById(R.id.hostVers);
+		final TextView hostNodes = (TextView) findViewById(R.id.hostNodes);
 
 		// Nodes list view and adapter
 		ListView nodeListView = (ListView) findViewById(R.id.nodeList);
@@ -135,7 +136,7 @@ public class NodeListActivity extends Activity {
 			public void run() {
 				try {
 					if (isOnline() == false) {
-						throw new Exception();
+						throw new IOException();
 					}
 					ProxmoxCustomApp httpApp = (ProxmoxCustomApp) getApplication();
 					HttpClient serverHttpClient = httpApp.getHttpClient();
@@ -172,12 +173,12 @@ public class NodeListActivity extends Activity {
 							.getJSONObject("data");
 					version = versionDataObject.getString("version");
 					release = versionDataObject.getString("release");
-					clusterVers.post(new Runnable() {
+					hostVers.post(new Runnable() {
 						@Override
 						public void run() {
-							cluster = server.substring(8, server.length() - 5);
-							clusterInfo.setText(cluster);
-							clusterVers.setText("Proxmox VE " + version + "-"
+							host = server.substring(8, server.length() - 5);
+							hostInfo.setText(host);
+							hostVers.setText("Proxmox VE " + version + "-"
 									+ release);
 						}
 					});
@@ -191,10 +192,10 @@ public class NodeListActivity extends Activity {
 					JSONObject nodesObject = new JSONObject(nodesResponse);
 					JSONArray nodesArray = nodesObject.getJSONArray("data");
 					final int nodesArrayLength = nodesArray.length();
-					clusterNodes.post(new Runnable() {
+					hostNodes.post(new Runnable() {
 						@Override
 						public void run() {
-							clusterNodes.setText(Integer
+							hostNodes.setText(Integer
 									.toString(nodesArrayLength));
 						}
 					});
@@ -226,13 +227,27 @@ public class NodeListActivity extends Activity {
 							}
 						});
 					}
-				} catch (Exception e) {
+				} catch (JSONException e) {
 					if (e.getMessage() != null) {
 						Log.e(e.getClass().getName(), e.getMessage());
 					} else {
 						Log.e(e.getClass().getName(), "null");
 					}
-					showErrorDialog();
+					showWrongDataDialog();
+				} catch (IOException e) {
+					if (e.getMessage() != null) {
+						Log.e(e.getClass().getName(), e.getMessage());
+					} else {
+						Log.e(e.getClass().getName(), "null");
+					}
+					showConnErrorDialog();
+				} catch (RuntimeException e) {
+					if (e.getMessage() != null) {
+						Log.e(e.getClass().getName(), e.getMessage());
+					} else {
+						Log.e(e.getClass().getName(), "null");
+					}
+					showWrongServerDialog();
 				}
 			}
 		}).start();
@@ -312,16 +327,16 @@ public class NodeListActivity extends Activity {
 
 	};
 
-	private void showErrorDialog() {
+	private void showWrongServerDialog() {
 		NodeListActivity.this.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						NodeListActivity.this);
-				builder.setTitle("Unable to connect");
-				builder.setMessage("Do you want to retry or review authentication data?");
+				builder.setTitle("Invalid address");
+				builder.setMessage("Wrong server address. \nDo you want to correct it?");
 				builder.setCancelable(false);
-				builder.setNeutralButton("Check",
+				builder.setPositiveButton("Yes",
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
@@ -331,14 +346,78 @@ public class NodeListActivity extends Activity {
 								startActivityForResult(loginIntent, 0);
 							}
 						});
-				builder.setNeutralButton("Retry",
+				builder.setNegativeButton("No",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+								NodeListActivity.this.finish();
+							}
+						});
+				AlertDialog alertDialog = builder.create();
+				alertDialog.show();
+			}
+		});
+	}
+
+	private void showWrongDataDialog() {
+		NodeListActivity.this.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						NodeListActivity.this);
+				builder.setTitle("Authentication error");
+				builder.setMessage("Unable to authenticate. \nDo you want to check authentication data?");
+				builder.setCancelable(false);
+				builder.setPositiveButton("Yes",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+								Intent loginIntent = new Intent(
+										NodeListActivity.this,
+										AuthActivity.class);
+								startActivityForResult(loginIntent, 0);
+							}
+						});
+				builder.setNegativeButton("No",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+								NodeListActivity.this.finish();
+							}
+						});
+				AlertDialog alertDialog = builder.create();
+				alertDialog.show();
+			}
+		});
+	}
+
+	private void showConnErrorDialog() {
+		NodeListActivity.this.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						NodeListActivity.this);
+				builder.setTitle("Connection error");
+				builder.setMessage("Unable to connect. \nDo you want to retry or review server address?");
+				builder.setCancelable(false);
+				builder.setNeutralButton("Review",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+								Intent loginIntent = new Intent(
+										NodeListActivity.this,
+										AuthActivity.class);
+								startActivityForResult(loginIntent, 0);
+							}
+						});
+				builder.setPositiveButton("Retry",
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
 								buildNodeList();
 							}
 						});
-				builder.setNeutralButton("Quit",
+				builder.setNegativeButton("Quit",
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
@@ -354,8 +433,7 @@ public class NodeListActivity extends Activity {
 	public boolean isOnline() {
 		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-		return (networkInfo != null && networkInfo.isConnected() && !networkInfo
-				.isFailover());
+		return (networkInfo != null && networkInfo.isConnected());
 	}
 
 }

@@ -1,6 +1,8 @@
 package it.quadrata.android.quad_prox_mob;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -94,10 +96,6 @@ public class VMStatsActivity extends Activity {
 		type = vmStatsIntent.getStringExtra("type");
 
 		updateVmStats();
-		
-		// Migrate nodes list retrieving
-		nodes_list.clear();
-		getTargetNodesList();
 	}
 
 	private void updateVmStats() {
@@ -186,13 +184,34 @@ public class VMStatsActivity extends Activity {
 							vmNotesText.setText(notes);
 						}
 					});
+
+					// Migrate nodes list retrieving
+					nodes_list.clear();
+					HttpGet nodesRequest = new HttpGet(server
+							+ "/api2/json/nodes");
+					nodesRequest.addHeader("Cookie", "PVEAuthCookie=" + ticket);
+					String nodesResponse = updateVmHttpClient.execute(
+							nodesRequest, vmStatsResponseHandler);
+					JSONObject nodesObject = new JSONObject(nodesResponse);
+					JSONArray nodesArray = nodesObject.getJSONArray("data");
+					final int nodesArrayLength = nodesArray.length();
+					JSONObject singleNodeObject = new JSONObject();
+					for (int i = 0; i <= (nodesArrayLength - 1); i++) {
+						singleNodeObject = nodesArray.getJSONObject(i);
+						final String nodeSpinnerItem = singleNodeObject
+								.getString("node");
+						if (!nodeSpinnerItem.equals(node)
+								&& !nodes_list.contains(nodeSpinnerItem)) {
+							nodes_list.add(nodeSpinnerItem);
+						}
+					}
 				} catch (Exception e) {
 					if (e.getMessage() != null) {
 						Log.e(e.getClass().getName(), e.getMessage());
 					} else {
 						Log.e(e.getClass().getName(), "No error message");
 					}
-					showErrorDialog();
+					showRefreshErrorDialog();
 				}
 			}
 		}).start();
@@ -221,7 +240,8 @@ public class VMStatsActivity extends Activity {
 					startVmRequest.addHeader("Cookie", "PVEAuthCookie="
 							+ ticket);
 					startVmRequest.addHeader("CSRFPreventionToken", token);
-					startVmHttpClient.execute(startVmRequest);
+					String startResponse = startVmHttpClient.execute(
+							startVmRequest, vmStatsResponseHandler);
 					VMStatsActivity.this.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
@@ -241,7 +261,7 @@ public class VMStatsActivity extends Activity {
 					} else {
 						Log.e(e.getClass().getName(), "No error message");
 					}
-					showErrorDialog();
+					showActionErrorDialog();
 				}
 			}
 		}).start();
@@ -270,7 +290,8 @@ public class VMStatsActivity extends Activity {
 					stopVmRequest
 							.addHeader("Cookie", "PVEAuthCookie=" + ticket);
 					stopVmRequest.addHeader("CSRFPreventionToken", token);
-					stopVmHttpClient.execute(stopVmRequest);
+					String stopResponse = stopVmHttpClient.execute(
+							stopVmRequest, vmStatsResponseHandler);
 					VMStatsActivity.this.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
@@ -290,7 +311,7 @@ public class VMStatsActivity extends Activity {
 					} else {
 						Log.e(e.getClass().getName(), "No error message");
 					}
-					showErrorDialog();
+					showActionErrorDialog();
 				}
 			}
 		}).start();
@@ -323,9 +344,6 @@ public class VMStatsActivity extends Activity {
 					if (online_migr == 1) {
 						migrateVmParameters.add(new BasicNameValuePair(
 								"online", "1"));
-					} else {
-						migrateVmParameters.add(new BasicNameValuePair(
-								"online", "0"));
 					}
 					HttpEntity migrateVmEntity = new UrlEncodedFormEntity(
 							migrateVmParameters);
@@ -333,8 +351,14 @@ public class VMStatsActivity extends Activity {
 					migrateVmRequest.addHeader("Cookie", "PVEAuthCookie="
 							+ ticket);
 					migrateVmRequest.addHeader("CSRFPreventionToken", token);
-					String migrateResponse = migrateVmHttpClient.execute(
-							migrateVmRequest, vmStatsResponseHandler);
+					HttpResponse migrateResponse = migrateVmHttpClient
+							.execute(migrateVmRequest);
+					HttpEntity migrateEntity = migrateResponse.getEntity();
+					String migrateContent = EntityUtils.toString(migrateEntity);
+					String migrateStatusCode = Integer.toString(migrateResponse
+							.getStatusLine().getStatusCode());
+					String migrateStatusReason = migrateResponse
+							.getStatusLine().getReasonPhrase();
 					VMStatsActivity.this.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
@@ -379,9 +403,9 @@ public class VMStatsActivity extends Activity {
 					if (e.getMessage() != null) {
 						Log.e(e.getClass().getName(), e.getMessage());
 					} else {
-						Log.e(e.getClass().getName(), "No error message");
+						Log.e(e.getClass().getName(), "null");
 					}
-					showErrorDialog();
+					showActionErrorDialog();
 				}
 			}
 		}).start();
@@ -510,8 +534,14 @@ public class VMStatsActivity extends Activity {
 									}
 								});
 
+						online_migr = 0;
 						CheckBox onlineMigrateCheck = (CheckBox) migrateDialogLayout
 								.findViewById(R.id.onlineMigrate_check);
+						if (online_migr == 0) {
+							onlineMigrateCheck.setChecked(false);
+						} else {
+							onlineMigrateCheck.setChecked(true);
+						}
 						onlineMigrateCheck
 								.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 									@Override
@@ -564,46 +594,6 @@ public class VMStatsActivity extends Activity {
 		}
 	}
 
-	private void getTargetNodesList() {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					if (isOnline() == false) {
-						throw new Exception();
-					}
-					ProxmoxCustomApp httpApp = (ProxmoxCustomApp) getApplication();
-					HttpClient nodesHttpClient = httpApp.getHttpClient();
-
-					HttpGet nodesRequest = new HttpGet(server
-							+ "/api2/json/nodes");
-					nodesRequest.addHeader("Cookie", "PVEAuthCookie=" + ticket);
-					String nodesResponse = nodesHttpClient.execute(
-							nodesRequest, vmStatsResponseHandler);
-					JSONObject nodesObject = new JSONObject(nodesResponse);
-					JSONArray nodesArray = nodesObject.getJSONArray("data");
-					final int nodesArrayLength = nodesArray.length();
-					JSONObject singleNodeObject = new JSONObject();
-					for (int i = 0; i <= (nodesArrayLength - 1); i++) {
-						singleNodeObject = nodesArray.getJSONObject(i);
-						final String nodeSpinnerItem = singleNodeObject
-								.getString("node");
-						if (!nodeSpinnerItem.equals(node)) {
-							nodes_list.add(nodeSpinnerItem);
-						}
-					}
-				} catch (Exception e) {
-					if (e.getMessage() != null) {
-						Log.e(e.getClass().getName(), e.getMessage());
-					} else {
-						Log.e(e.getClass().getName(), "No error message");
-					}
-					showErrorDialog();
-				}
-			}
-		}).start();
-	}
-
 	private final ResponseHandler<String> vmStatsResponseHandler = new ResponseHandler<String>() {
 
 		@Override
@@ -617,14 +607,43 @@ public class VMStatsActivity extends Activity {
 
 	};
 
-	private void showErrorDialog() {
+	private void showRefreshErrorDialog() {
 		VMStatsActivity.this.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						VMStatsActivity.this);
-				builder.setTitle("Unable to connect");
-				builder.setMessage("Retry later.");
+				builder.setTitle("Connection error");
+				builder.setMessage("Unable to connect. \nDo you want to retry?");
+				builder.setCancelable(false);
+				builder.setPositiveButton("Ok",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+								updateVmStats();
+							}
+						});
+				builder.setNegativeButton("No",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+								VMStatsActivity.this.finish();
+							}
+						});
+				AlertDialog alertDialog = builder.create();
+				alertDialog.show();
+			}
+		});
+	}
+
+	private void showActionErrorDialog() {
+		VMStatsActivity.this.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						VMStatsActivity.this);
+				builder.setTitle("Connection error");
+				builder.setMessage("Unable to connect. \nRetry later.");
 				builder.setCancelable(false);
 				builder.setNeutralButton("Ok",
 						new DialogInterface.OnClickListener() {
@@ -642,7 +661,6 @@ public class VMStatsActivity extends Activity {
 	public boolean isOnline() {
 		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-		return (networkInfo != null && networkInfo.isConnected() && !networkInfo
-				.isFailover());
+		return (networkInfo != null && networkInfo.isConnected());
 	}
 }

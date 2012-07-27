@@ -72,6 +72,9 @@ public class LogStatsActivity extends Activity {
 			@Override
 			public void run() {
 				try {
+					if (isOnline() == false) {
+						throw new Exception();
+					}
 					ProxmoxCustomApp httpApp = (ProxmoxCustomApp) getApplication();
 					HttpClient taskHttpClient = httpApp.getHttpClient();
 
@@ -91,7 +94,8 @@ public class LogStatsActivity extends Activity {
 					JSONObject progressRowObject = new JSONObject();
 					for (int i = 0; i <= (progressArrayLenght - 1); i++) {
 						progressRowObject = progressArray.getJSONObject(i);
-						final String progressRow = progressRowObject.getString("t");
+						final String progressRow = progressRowObject
+								.getString("t");
 						taskProgressText.post(new Runnable() {
 							@Override
 							public void run() {
@@ -99,7 +103,7 @@ public class LogStatsActivity extends Activity {
 							}
 						});
 					}
-					
+
 					// Task status request
 					HttpGet taskStatusRequest = new HttpGet();
 					URI taskStatusUri = new URI(server + "/api2/json/nodes/"
@@ -133,16 +137,13 @@ public class LogStatsActivity extends Activity {
 						}
 					});
 
-								
 				} catch (Exception e) {
 					if (e.getMessage() != null) {
 						Log.e(e.getClass().getName(), e.getMessage());
 					} else {
 						Log.e(e.getClass().getName(), "No error message");
 					}
-					if (isOnline() == false) {
-						showNoConnDialog();
-					}
+						showErrorDialog();
 				}
 			}
 		}).start();
@@ -179,14 +180,14 @@ public class LogStatsActivity extends Activity {
 
 	};
 
-	private void showNoConnDialog() {
+	private void showErrorDialog() {
 		LogStatsActivity.this.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						LogStatsActivity.this);
-				builder.setTitle("No network connection");
-				builder.setMessage("An Internet connection is needed. \nDo you want to retry?");
+				builder.setTitle("Connection error");
+				builder.setMessage("Unable to connect. \nDo you want to retry?");
 				builder.setCancelable(false);
 				builder.setPositiveButton("Yes",
 						new DialogInterface.OnClickListener() {
@@ -211,7 +212,6 @@ public class LogStatsActivity extends Activity {
 	public boolean isOnline() {
 		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-		return (networkInfo != null && networkInfo.isConnected() && !networkInfo
-				.isFailover());
+		return (networkInfo != null && networkInfo.isConnected());
 	}
 }

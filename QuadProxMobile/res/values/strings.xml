@@ -16,7 +16,7 @@
     <string name="authPref_label">Login data</string>
     <string name="updatePref_label">Refresh</string>
     <string name="app_description">Android Proxmox Client v1.0</string>
-    <string name="clusterNodes_label">Nodes: </string>
+    <string name="hostNodes_label">Nodes: </string>
     <string name="nodeVZ_label">VZ: </string>
     <string name="nodeQM_label">Qemu:</string>
     <string name="cpu_label">Cpu: </string>

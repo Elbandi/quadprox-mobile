@@ -165,16 +165,16 @@ public class VMListActivity extends Activity {
 					JSONObject nodeObject = nodesJsonArray
 							.getJSONObject(node_index);
 					node = nodeObject.getString("node");
-					node_cpu_usage_double = nodeObject.getDouble("cpu") * 100;
+					node_cpu_usage_double = nodeObject.optDouble("cpu", 0) * 100;
 					node_cpu_usage = cpu_dec_form.format(node_cpu_usage_double);
-					node_max_cpu = nodeObject.getInt("maxcpu");
-					node_mem_double = nodeObject.getDouble("mem");
-					node_max_mem_double = nodeObject.getDouble("maxmem");
+					node_max_cpu = nodeObject.optInt("maxcpu", 0);
+					node_mem_double = nodeObject.optDouble("mem", 0);
+					node_max_mem_double = nodeObject.optDouble("maxmem", 0);
 					node_mem = cpu_dec_form
 							.format(node_mem_double / 1073741824);
 					node_max_mem = cpu_dec_form
 							.format(node_max_mem_double / 1073741824);
-					node_uptime = nodeObject.getInt("uptime");
+					node_uptime = nodeObject.optInt("uptime", 0);
 					node_uptime_d = node_uptime / DAY;
 					node_uptime_h = (node_uptime - (node_uptime_d * DAY))
 							/ HOUR;
@@ -385,8 +385,8 @@ public class VMListActivity extends Activity {
 			public void run() {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						VMListActivity.this);
-				builder.setTitle("Unable to connect");
-				builder.setMessage("Do you want to retry?");
+				builder.setTitle("Connection error");
+				builder.setMessage("Unable to connect. \nDo you want to retry?");
 				builder.setCancelable(false);
 				builder.setPositiveButton("Yes",
 						new DialogInterface.OnClickListener() {
@@ -411,6 +411,6 @@ public class VMListActivity extends Activity {
 	public boolean isOnline() {
 		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-		return (networkInfo != null && networkInfo.isConnected() && !networkInfo.isFailover());
+		return (networkInfo != null && networkInfo.isConnected());
 	}
 }
