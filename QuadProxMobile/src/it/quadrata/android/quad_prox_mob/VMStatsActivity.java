@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -238,18 +239,59 @@ public class VMStatsActivity extends Activity {
 					startVmRequest.addHeader("Cookie", "PVEAuthCookie="
 							+ ticket);
 					startVmRequest.addHeader("CSRFPreventionToken", token);
-					String startResponse = startVmHttpClient.execute(
-							startVmRequest, vmStatsResponseHandler).entity_content;
-					VMStatsActivity.this.runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							Toast startVmToast = Toast.makeText(
-									VMStatsActivity.this, name
-											+ " start request sent",
-									Toast.LENGTH_SHORT);
-							startVmToast.show();
+					final ResponseObject startResponse = startVmHttpClient
+							.execute(startVmRequest, vmStatsResponseHandler);
+					String startContent = startResponse.entity_content
+							.substring(startResponse.entity_content
+									.indexOf("{"));
+					JSONObject contentObj = new JSONObject(startContent);
+					JSONObject errorsObj = contentObj.optJSONObject("errors");
+					if (errorsObj != null) {
+						Iterator errorsIterator = errorsObj.keys();
+						while (errorsIterator.hasNext()) {
+							String error_label = (String) errorsIterator.next();
+							startResponse.entity_errors = startResponse.entity_errors
+									.concat("\n" + error_label + ": "
+											+ errorsObj.getString(error_label));
 						}
-					});
+					}
+					if (startResponse.status_code != 200) {
+						VMStatsActivity.this.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								AlertDialog.Builder builder = new AlertDialog.Builder(
+										VMStatsActivity.this);
+								builder.setCancelable(false);
+								builder.setTitle("Http error "
+										+ Integer
+												.toString(startResponse.status_code));
+								builder.setMessage(startResponse.status_reason
+										+ startResponse.entity_errors);
+								builder.setNeutralButton("Ok",
+										new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(
+													DialogInterface dialog,
+													int id) {
+												dialog.dismiss();
+											}
+										});
+								AlertDialog alertDialog = builder.create();
+								alertDialog.show();
+							}
+						});
+					} else {
+						VMStatsActivity.this.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								Toast startVmToast = Toast.makeText(
+										VMStatsActivity.this, name
+												+ " start request sent",
+										Toast.LENGTH_SHORT);
+								startVmToast.show();
+							}
+						});
+					}
 					// Updating VM stats
 					Thread.sleep(2000);
 					updateVmStats();
@@ -288,18 +330,58 @@ public class VMStatsActivity extends Activity {
 					stopVmRequest
 							.addHeader("Cookie", "PVEAuthCookie=" + ticket);
 					stopVmRequest.addHeader("CSRFPreventionToken", token);
-					String stopResponse = stopVmHttpClient.execute(
-							stopVmRequest, vmStatsResponseHandler).entity_content;
-					VMStatsActivity.this.runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							Toast stopVmToast = Toast.makeText(
-									VMStatsActivity.this, name
-											+ " stop request sent",
-									Toast.LENGTH_SHORT);
-							stopVmToast.show();
+					final ResponseObject stopResponse = stopVmHttpClient
+							.execute(stopVmRequest, vmStatsResponseHandler);
+					String stopContent = stopResponse.entity_content
+							.substring(stopResponse.entity_content.indexOf("{"));
+					JSONObject contentObj = new JSONObject(stopContent);
+					JSONObject errorsObj = contentObj.optJSONObject("errors");
+					if (errorsObj != null) {
+						Iterator errorsIterator = errorsObj.keys();
+						while (errorsIterator.hasNext()) {
+							String error_label = (String) errorsIterator.next();
+							stopResponse.entity_errors = stopResponse.entity_errors
+									.concat("\n" + error_label + ": "
+											+ errorsObj.getString(error_label));
 						}
-					});
+					}
+					if (stopResponse.status_code != 200) {
+						VMStatsActivity.this.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								AlertDialog.Builder builder = new AlertDialog.Builder(
+										VMStatsActivity.this);
+								builder.setCancelable(false);
+								builder.setTitle("Http error "
+										+ Integer
+												.toString(stopResponse.status_code));
+								builder.setMessage(stopResponse.status_reason
+										+ stopResponse.entity_errors);
+								builder.setNeutralButton("Ok",
+										new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(
+													DialogInterface dialog,
+													int id) {
+												dialog.dismiss();
+											}
+										});
+								AlertDialog alertDialog = builder.create();
+								alertDialog.show();
+							}
+						});
+					} else {
+						VMStatsActivity.this.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								Toast stopVmToast = Toast.makeText(
+										VMStatsActivity.this, name
+												+ " stop request sent",
+										Toast.LENGTH_SHORT);
+								stopVmToast.show();
+							}
+						});
+					}
 					// Updating VM stats
 					Thread.sleep(2000);
 					updateVmStats();
@@ -357,13 +439,17 @@ public class VMStatsActivity extends Activity {
 					JSONObject contentObj = new JSONObject(migrateContent);
 					final String contentData = contentObj.optString("data",
 							"null");
+					JSONObject errorsObj = contentObj.optJSONObject("errors");
+					if (errorsObj != null) {
+						Iterator errorsIterator = errorsObj.keys();
+						while (errorsIterator.hasNext()) {
+							String error_label = (String) errorsIterator.next();
+							migrateResponse.entity_errors = migrateResponse.entity_errors
+									.concat("\n" + error_label + ": "
+											+ errorsObj.getString(error_label));
+						}
+					}
 					if (migrateResponse.status_code != 200) {
-						char[] status_reason_array = migrateResponse.status_reason
-								.toCharArray();
-						status_reason_array[0] = Character
-								.toUpperCase(status_reason_array[0]);
-						final String status_reason = new String(
-								status_reason_array);
 						VMStatsActivity.this.runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
@@ -373,7 +459,8 @@ public class VMStatsActivity extends Activity {
 								builder.setTitle("Http error "
 										+ Integer
 												.toString(migrateResponse.status_code));
-								builder.setMessage(status_reason + ".");
+								builder.setMessage(migrateResponse.status_reason
+										+ migrateResponse.entity_errors);
 								builder.setNeutralButton("Ok",
 										new DialogInterface.OnClickListener() {
 											@Override
@@ -632,6 +719,7 @@ public class VMStatsActivity extends Activity {
 
 	private static class ResponseObject {
 		public String entity_content;
+		public String entity_errors = "";
 		public int status_code;
 		public String status_reason;
 	}
