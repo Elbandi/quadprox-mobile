@@ -23,7 +23,6 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_toRightOf="@+id/logIcon"
-            android:text="@string/logs_title"
             android:textSize="23sp"
             android:textStyle="bold" />
 
