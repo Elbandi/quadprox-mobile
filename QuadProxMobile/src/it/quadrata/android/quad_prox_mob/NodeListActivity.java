@@ -52,7 +52,7 @@ public class NodeListActivity extends Activity {
 	private static String token;
 
 	// Host info
-	private static String host;
+	private static String cluster;
 	private static String version;
 	private static String release;
 
@@ -161,7 +161,25 @@ public class NodeListActivity extends Activity {
 					ticket = data.getString("ticket");
 					token = data.getString("CSRFPreventionToken");
 
-					// Cluster info request
+					// Cluster info request				
+					HttpGet clusterRequest = new HttpGet(server
+							+ "/api2/json/cluster/status");
+					clusterRequest.addHeader("Cookie", "PVEAuthCookie="
+							+ ticket);
+					String clusterResponse = serverHttpClient.execute(
+							clusterRequest, serverResponseHandler);
+					JSONObject clusterObject = new JSONObject(clusterResponse);
+					JSONArray clusterDataArray = clusterObject
+							.getJSONArray("data");
+					JSONObject clusterInfo =  (JSONObject) clusterDataArray.get(0);
+					cluster = clusterInfo.optString("name");
+					hostInfo.post(new Runnable() {					
+						@Override
+						public void run() {
+							hostInfo.setText(cluster);							
+						}
+					});
+					
 					HttpGet versionRequest = new HttpGet(server
 							+ "/api2/json/version");
 					versionRequest.addHeader("Cookie", "PVEAuthCookie="
@@ -176,8 +194,6 @@ public class NodeListActivity extends Activity {
 					hostVers.post(new Runnable() {
 						@Override
 						public void run() {
-							host = server.substring(8, server.length() - 5);
-							hostInfo.setText(host);
 							hostVers.setText("Proxmox VE " + version + "-"
 									+ release);
 						}
