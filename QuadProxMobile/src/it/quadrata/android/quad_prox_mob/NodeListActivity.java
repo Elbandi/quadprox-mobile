@@ -324,6 +324,7 @@ public class NodeListActivity extends Activity {
 					ClusterLogActivity.class);
 			logIntent.putExtra("server", server);
 			logIntent.putExtra("ticket", ticket);
+			logIntent.putExtra("logHost", "");
 			startActivity(logIntent);
 		default:
 			return super.onOptionsItemSelected(item);

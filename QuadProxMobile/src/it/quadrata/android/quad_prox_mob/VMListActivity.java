@@ -360,6 +360,7 @@ public class VMListActivity extends Activity {
 					ClusterLogActivity.class);
 			logIntent.putExtra("server", server);
 			logIntent.putExtra("ticket", ticket);
+			logIntent.putExtra("logHost", node);
 			startActivity(logIntent);
 		default:
 			return super.onOptionsItemSelected(item);

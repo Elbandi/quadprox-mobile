@@ -43,8 +43,8 @@ public class ClusterLogActivity extends Activity {
 	private static String server;
 	private static String ticket;
 
-	// Cluster info
-	// private static String cluster;
+	// Node or cluster to get info for. 
+	private static String logHost;
 
 	// Log variables
 	private static int errors;
@@ -67,14 +67,14 @@ public class ClusterLogActivity extends Activity {
 		Intent logListIntent = ClusterLogActivity.this.getIntent();
 		server = logListIntent.getStringExtra("server");
 		ticket = logListIntent.getStringExtra("ticket");
+		logHost = logListIntent.getStringExtra("logHost");
 
 		buildLogList();
 	}
 
 	private void buildLogList() {
 		// Logs header views
-		// final TextView clusterInfoText = (TextView)
-		// findViewById(R.id.clusterInfo);
+		final TextView logTitle = (TextView) findViewById(R.id.logTitle);
 		final TextView taskErrorsText = (TextView) findViewById(R.id.taskErrors);
 		errors = 0;
 
@@ -148,6 +148,41 @@ public class ClusterLogActivity extends Activity {
 					for (int i = 0; i <= (logJsonArrayLenght - 1); i++) {
 						singleTaskObject = logJsonArray.getJSONObject(i);
 						final TaskItem item = new TaskItem();
+						String task_node = singleTaskObject.getString("node");
+						String task_id = singleTaskObject.optString("id");
+						if (task_id.equals("")) {
+							task_id = "###";
+						}
+						if (logHost.length() > 0) {
+							boolean next;
+							if (task_id.length() < 1) {
+								next = (logHost.compareTo(task_node) != 0) ?
+										true : false;
+							}
+							else {
+								if (task_id.equals("###")) {
+									next = true;
+								}
+								else if (logHost.compareTo(task_id) == 0) {
+									next = false;
+								}
+								else {
+									next = (logHost.compareTo(task_node) != 0) ?
+											true : false;
+								}
+							}
+							if (next)
+								continue;
+						}
+						logTitle.post(new Runnable() {
+							public void run() {
+								String logInfo = "Logs: ";
+								logInfo += (logHost.length() > 0) ? logHost : "Cluster"; 
+								logTitle.setText(logInfo);
+							}
+						});
+						item.task_node = task_node;
+						item.task_id = task_id;
 						timeStart = singleTaskObject.getLong("starttime");
 						item.task_start = new SimpleDateFormat(
 								"MMM dd HH:mm:ss").format(new Date(
@@ -161,11 +196,6 @@ public class ClusterLogActivity extends Activity {
 									timeStop * 1000));
 						}
 						item.task_type = singleTaskObject.getString("type");
-						item.task_id = singleTaskObject.optString("id");
-						if (item.task_id.equals("")) {
-							item.task_id = "###";
-						}
-						item.task_node = singleTaskObject.getString("node");
 						item.task_user = singleTaskObject.getString("user");
 						status = singleTaskObject.optString("status");
 						if (status.equals("OK")) {

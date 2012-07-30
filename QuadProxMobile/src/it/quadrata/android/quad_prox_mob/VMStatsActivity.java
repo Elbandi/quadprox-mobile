@@ -711,6 +711,7 @@ public class VMStatsActivity extends Activity {
 					ClusterLogActivity.class);
 			logIntent.putExtra("server", server);
 			logIntent.putExtra("ticket", ticket);
+			logIntent.putExtra("logHost", vmid);
 			startActivity(logIntent);
 		default:
 			return super.onOptionsItemSelected(item);
