@@ -242,6 +242,9 @@ public class WidgetProvider extends AppWidgetProvider {
 					v.setTextViewText(R.id.memory, item.memory);
 					v.setTextViewText(R.id.status, item.status);
 					
+					// Add new view to the linear layout in the widget
+					updateViews.addView(R.id.nodeList, v);
+
 					Intent vmListIntent = new Intent(context, VMListActivity.class);
 					// Putting VM data into the intent for VM stats activity
 					vmListIntent.setAction("NODE_ROW_CLICK_ACTION_" + i);
@@ -255,8 +258,6 @@ public class WidgetProvider extends AppWidgetProvider {
 							PendingIntent.getActivity(context, 0, vmListIntent, 0);
 					v.setOnClickPendingIntent(R.id.widgetNodeRow, pendingIntent);
 
-					// Add new view to the linear layout in the widget
-					updateViews.addView(R.id.nodeList, v);
 				}
 
 				Intent nodeListIntent = new Intent(context, NodeListActivity.class);

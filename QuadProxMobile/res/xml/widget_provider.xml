@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+	Cell calculation: 70 × n − 30
+	http://developer.android.com/guide/practices/ui_guidelines/widget_design.html#anatomy
+	height: 2 rows = 70 x 2 - 30 = 110
+	width: 4 rows = 70 x 4 - 30 = 250
+	But since we allow 2.2+ use old method
+	Cell calculation < 4.0: 74 x n -2
+	height: 2 rows = 74 x 2 - 2 = 146
+	width: 4 rows = 74 x 4 - 2 = 294	 
+ -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:minWidth="250dip"
-    android:minHeight="180dip"
+    android:minWidth="294dp"
+    android:minHeight="146dp"
     android:updatePeriodMillis="1800000"
     android:initialLayout="@layout/widget_layout" >
 </appwidget-provider>

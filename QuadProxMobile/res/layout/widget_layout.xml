@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widget"
-    android:layout_width="match_parent"
+    android:layout_width="294dp"
     android:layout_height="wrap_content"
     android:background="@drawable/widget_background"
     android:orientation="vertical"
@@ -15,7 +15,7 @@
             android:id="@+id/ic_host"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-			android:layout_margin="2dip"
+			android:layout_margin="2dp"
             android:src="@drawable/ic_host_widget" />
 
         <TextView
@@ -54,7 +54,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="2dip"
+        android:layout_margin="2dp"
         android:background="#323232"
         android:orientation="vertical" >
 
@@ -72,6 +72,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:layout_margin="2dp"
         android:id="@+id/nodeList" />
 
 </LinearLayout>
