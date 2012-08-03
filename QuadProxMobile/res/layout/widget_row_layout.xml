@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:android1="http://schemas.android.com/apk/res/android"
+    android1:id="@+id/widgetNodeRow"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android1:clickable="true"
+    android1:orientation="horizontal" >
+
+    <TextView
+        android1:id="@+id/node"
+        android1:layout_width="wrap_content"
+        android1:layout_height="wrap_content"
+        android1:layout_marginLeft="5dp"
+        android1:layout_weight="1"
+        android1:textSize="@dimen/padding_widget" />
+
+    <TextView
+        android1:id="@+id/cpu"
+        android1:layout_width="wrap_content"
+        android1:layout_height="wrap_content"
+        android1:layout_marginLeft="5dp"
+        android1:layout_weight="1"
+        android1:textSize="@dimen/padding_widget" />
+
+    <TextView
+        android1:id="@+id/memory"
+        android1:layout_width="wrap_content"
+        android1:layout_height="wrap_content"
+        android1:layout_marginLeft="5dp"
+        android1:layout_weight="1"
+        android1:textSize="@dimen/padding_widget" />
+
+    <TextView
+        android1:id="@+id/status"
+        android1:layout_width="wrap_content"
+        android1:layout_height="wrap_content"
+        android1:layout_marginLeft="5dp"
+        android1:layout_weight="1"
+        android1:textSize="@dimen/padding_widget" />
+
+</LinearLayout>

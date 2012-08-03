@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/widget_background"
+    android:orientation="vertical"
+    android:padding="5dp" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+ 
+        <ImageView
+            android:id="@+id/ic_host"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+			android:layout_margin="2dip"
+            android:src="@drawable/ic_host_widget" />
+
+        <TextView
+            android:id="@+id/hostInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/ic_host"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/hostVers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/hostInfo"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/ic_host"
+            android:ellipsize="end"
+            android:textSize="9sp" />
+
+        <Button
+            android:id="@+id/widgetUpdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/hostVers"
+            android:layout_alignParentRight="true"
+            android:text="@string/updatePref_label"
+            android:textSize="9sp" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="2dip"
+        android:background="#323232"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:text="Nodes"
+            android:textSize="9sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/nodeList" />
+
+</LinearLayout>
