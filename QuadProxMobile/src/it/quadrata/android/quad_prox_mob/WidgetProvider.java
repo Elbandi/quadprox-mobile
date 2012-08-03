@@ -241,9 +241,6 @@ public class WidgetProvider extends AppWidgetProvider {
 					v.setTextViewText(R.id.cpu, item.cpu);
 					v.setTextViewText(R.id.memory, item.memory);
 					v.setTextViewText(R.id.status, item.status);
-					
-					// Add new view to the linear layout in the widget
-					updateViews.addView(R.id.nodeList, v);
 
 					Intent vmListIntent = new Intent(context, VMListActivity.class);
 					// Putting VM data into the intent for VM stats activity
@@ -251,13 +248,15 @@ public class WidgetProvider extends AppWidgetProvider {
 					vmListIntent.putExtra("server", server);
 					vmListIntent.putExtra("ticket", ticket);
 					vmListIntent.putExtra("token", token);
-					vmListIntent.putExtra("node", item.node);
+					vmListIntent.putExtra("node", item.node + 1);
 					vmListIntent.putExtra("node_index", i);
 					vmListIntent.putExtra("node_vers", item.node_vers);
-					PendingIntent pendingIntent = 
-							PendingIntent.getActivity(context, 0, vmListIntent, 0);
+					PendingIntent pendingIntent = PendingIntent.getActivity(
+									context, 0, vmListIntent, Intent.FLAG_ACTIVITY_NEW_TASK);
 					v.setOnClickPendingIntent(R.id.widgetNodeRow, pendingIntent);
-
+					
+					// Add new view to the linear layout in the widget
+					updateViews.addView(R.id.nodeList, v);
 				}
 
 				Intent nodeListIntent = new Intent(context, NodeListActivity.class);
