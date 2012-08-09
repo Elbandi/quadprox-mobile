@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:id="@+id/notifyArea"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <CheckBox
+            android:id="@+id/notifyEnable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="70dp" />
+
+        <TextView
+            android:id="@+id/notifyLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/notifyEnable"
+            android:layout_alignParentLeft="true"
+            android:text="@string/notify_enable" />
+
+        <CheckBox
+            android:id="@+id/notifyChange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/notifyEnable"
+            android:layout_alignRight="@+id/notifyEnable"
+            android:layout_below="@id/notifyEnable" />
+
+        <TextView
+            android:id="@+id/notifyStatusLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/notifyChange"
+            android:layout_alignParentLeft="true"
+            android:text="@string/notify_change_label" />
+
+        <CheckBox
+            android:id="@+id/notifyCpu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/notifyChange"
+            android:layout_alignRight="@+id/notifyChange"
+            android:layout_below="@id/notifyChange" />
+
+        <TextView
+            android:id="@+id/notifyCpuLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/notifyCpu"
+            android:text="@string/notify_cpu_label" />
+
+        <EditText
+            android:id="@+id/cpuLimit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/notifyCpu"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/notifyCpu"
+            android:layout_marginRight="10dp"
+            android:hint="@string/cpu_limit_hint"
+            android:inputType="number"
+            android:text="100" >
+
+        </EditText>
+
+        <TextView
+            android:id="@+id/cpuLimitLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/cpuLimit"
+            android:layout_alignLeft="@id/notifyCpuLabel"
+            android:text="@string/cpu_limit_label" />
+
+        <CheckBox
+            android:id="@+id/notifyMem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/notifyChange"
+            android:layout_alignRight="@+id/notifyCpu"
+            android:layout_below="@id/cpuLimit" />
+
+        <TextView
+            android:id="@+id/notifyMemLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/notifyMem"
+            android:layout_alignBottom="@id/notifyMem"
+            android:text="@string/notify_mem" />
+
+        <EditText
+            android:id="@+id/memLimit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/notifyMem"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/notifyMem"
+            android:layout_marginRight="10dp"
+            android:ellipsize="end"
+            android:hint="@string/mem_limit_hint"
+            android:inputType="number"
+            android:text="100" >
+
+        </EditText>
+
+        <TextView
+            android:id="@+id/memLimitLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/memLimit"
+            android:layout_alignParentLeft="true"
+            android:text="@string/mem_limit_label" />
+
+    </RelativeLayout>
+</ScrollView>

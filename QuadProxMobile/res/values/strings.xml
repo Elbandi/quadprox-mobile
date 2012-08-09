@@ -38,5 +38,22 @@
     <string name="realm_hint">realm (eg. pve, pam, ...)</string>
     <string name="migratePref_label">Migrate</string>
     <string name="onlineMigrateCheck_label">Online</string>
-
+    <string name="font_size_label">Font size</string>
+    <string name="interval_label">Update interval</string>
+    <string name="font_size_hint">Number: Font size in scalable pixels</string>
+    <string name="update_interval_hint">Number: Update interval in minutes</string>
+    <string name="save_prefs">Save</string>
+    <string name="interval_hint">How often to update in minuts</string>
+    <string name="cancel_prefs">Cancel</string>
+    <string name="cluster_label">Cluster</string>
+    <string name="cluster_hint">Cluster to monitor</string>
+    <string name="notify_enable">Enable Notifications</string>
+    <string name="notify_change_label">Notify status</string>
+    <string name="notify_cpu_label">Notify CPU Limit</string>
+    <string name="notify_mem">Notify memory limit</string>
+    <string name="cpu_limit_label">CPU limit</string>
+    <string name="mem_limit_label">Memory limit</string>
+    <string name="cpu_limit_hint">Percent</string>
+    <string name="mem_limit_hint">Percent</string>
+    
 </resources>

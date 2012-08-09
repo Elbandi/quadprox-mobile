@@ -49,8 +49,16 @@
             android:name="it.quadrata.android.quad_prox_mob.LogStatsActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" >
-        </activity>        
-        <receiver
+        </activity>
+        <activity 
+            android:name="it.quadrata.android.quad_prox_mob.WidgetConfigActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+    	<receiver
             android:name="it.quadrata.android.quad_prox_mob.WidgetProvider"
         	android:icon="@drawable/qpm_launcher"
         	android:label="@string/app_name" >
@@ -61,6 +69,21 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_provider" />
         </receiver>
-    </application>
+        <activity 
+            android:name="it.quadrata.android.quad_prox_mob.WidgetPrefsActivity"
+            android:icon="@drawable/qpm_launcher"
+            android:label="@string/app_name" 
+            android:screenOrientation="portrait">
+        </activity>
+        <activity 
+            android:name="it.quadrata.android.quad_prox_mob.AccountsActivity">
+        </activity>
+        <activity 
+            android:name="it.quadrata.android.quad_prox_mob.PrefsActivity">
+        </activity>
+        <activity 
+            android:name="it.quadrata.android.quad_prox_mob.NotifyActivity">
+        </activity>
+</application>
 
 </manifest>

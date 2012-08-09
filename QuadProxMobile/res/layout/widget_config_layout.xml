@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <EditText
+            android:id="@+id/fontSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="10dp"
+            android:ems="8"
+            android:gravity="center_vertical"
+            android:hint="@string/font_size_hint"
+            android:inputType="number" >
+
+            <requestFocus />
+        </EditText>
+
+        <TextView
+            android:id="@+id/fontSizeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/fontSize"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toLeftOf="@id/fontSize"
+            android:text="@string/font_size_label" />
+
+        <EditText
+            android:id="@+id/interval"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/fontSize"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/fontSize"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:hint="@string/update_interval_hint"
+            android:inputType="number" />
+
+        <TextView
+            android:id="@+id/intervalLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/interval"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/fontSizeLabel"
+            android:layout_marginLeft="10dp"
+            android:layout_toLeftOf="@id/interval"
+            android:text="@string/interval_label" />
+
+        <Spinner
+            android:id="@+id/cluster"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/interval"
+            android:layout_alignRight="@id/interval"
+            android:layout_below="@id/interval"
+            android:layout_marginTop="10dp"
+            android:prompt="@string/cluster_hint" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/cluster"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/intervalLabel"
+            android:layout_marginLeft="10dp"
+            android:layout_toLeftOf="@id/cluster"
+            android:text="@string/cluster_label" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:gravity="center_vertical|center_horizontal" >
+
+        <Button
+            android:id="@+id/savePrefsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save_prefs" />
+
+    </LinearLayout>
+
+</LinearLayout>
