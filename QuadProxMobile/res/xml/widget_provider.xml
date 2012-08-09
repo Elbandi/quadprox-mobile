@@ -12,6 +12,5 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:minWidth="294dp"
     android:minHeight="146dp"
-    android:updatePeriodMillis="1800000"
-    android:initialLayout="@layout/widget_layout" >
+    android:configure="it.quadrata.android.quad_prox_mob.WidgetConfigActivity">
 </appwidget-provider>

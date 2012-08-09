@@ -29,7 +29,7 @@
             android:singleLine="true"
             android:textSize="15sp"
             android:textStyle="bold" />
-
+        
         <TextView
             android:id="@+id/hostVers"
             android:layout_width="wrap_content"
@@ -40,14 +40,20 @@
             android:ellipsize="end"
             android:textSize="9sp" />
 
-        <Button
-            android:id="@+id/widgetUpdate"
+        <ImageView 
+            android:id="@+id/widgetRefresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/hostVers"
             android:layout_alignParentRight="true"
-            android:text="@string/updatePref_label"
-            android:textSize="9sp" />
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/ic_menu_refresh"/>
+
+        <ImageView 
+            android:id="@+id/widgetConfig"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/widgetRefresh"
+            android:src="@drawable/ic_menu_manage"/>
 
     </RelativeLayout>
 
