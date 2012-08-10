@@ -182,7 +182,8 @@ public class WidgetPrefsActivity extends TabActivity {
 	}
 	
 	public static class TextChangeListener implements android.text.TextWatcher {
-		private static Map<String, Editable> changed;
+		private static Map<String, Editable> changed =
+				new HashMap<String, Editable>();
 		private EditText me;
 		private Editable oldText;
 		private String pref;
@@ -190,7 +191,6 @@ public class WidgetPrefsActivity extends TabActivity {
 		public TextChangeListener(String pref, EditText me) {
 			this.me = me;
 			this.pref = pref;
-			changed = new HashMap<String, Editable>();
 		}
 		
 		public static Map<String, Editable> getPrefs() {
@@ -246,7 +246,8 @@ public class WidgetPrefsActivity extends TabActivity {
 	}
 	
 	public static class CheckboxChangeListener implements View.OnClickListener {
-		private static Map<String, Boolean> changed;
+		private static Map<String, Boolean> changed =
+				new HashMap<String, Boolean>();
 		private CheckBox me;
 		private String pref;
 		private OnClickCallback callback = null;
@@ -254,7 +255,6 @@ public class WidgetPrefsActivity extends TabActivity {
 		public CheckboxChangeListener(String pref, CheckBox me) {
 			this.me = me;
 			this.pref = pref;
-			changed = new HashMap<String, Boolean>();
 		}
 
 		@Override
