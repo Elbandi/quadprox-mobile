@@ -163,21 +163,21 @@ public class WidgetConfigActivity extends Activity {
 					clusterName.set(clusterInfo.optString("name"));
 				} catch (JSONException e) {
 					if (e.getMessage() != null) {
-						Log.e(e.getClass().getName(), e.getMessage());
+						Log.e(TAG, e.getMessage());
 					} else {
-						Log.e(e.getClass().getName(), "null");
+						Log.e(TAG, "null");
 					}
 				} catch (IOException e) {
 					if (e.getMessage() != null) {
-						Log.e(e.getClass().getName(), e.getMessage());
+						Log.e(TAG, e.getMessage());
 					} else {
-						Log.e(e.getClass().getName(), "null");
+						Log.e(TAG, "null");
 					}
 				} catch (RuntimeException e) {
 					if (e.getMessage() != null) {
-						Log.e(e.getClass().getName(), e.getMessage());
+						Log.e(TAG, e.getMessage());
 					} else {
-						Log.e(e.getClass().getName(), "null");
+						Log.e(TAG, "null");
 					}
 				}
 			}
@@ -187,9 +187,9 @@ public class WidgetConfigActivity extends Activity {
 			t.join();
 		} catch (InterruptedException e) {
 			if (e.getMessage() != null) {
-				Log.e(e.getClass().getName(), e.getMessage());
+				Log.e(TAG, e.getMessage());
 			} else {
-				Log.e(e.getClass().getName(), "null");
+				Log.e(TAG, "null");
 			}
 		}
 		
@@ -282,7 +282,7 @@ public class WidgetConfigActivity extends Activity {
 				AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
 				alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() +
 						(duration * 60 * 1000), (duration * 60 * 1000), pendingIntentAlarm);
-				Log.d("Ok Button", "Created Alarm. Action URI = " + uriData.toString() +
+				Log.d(TAG, "Created Alarm. Action URI = " + uriData.toString() +
 						" Minuts = " + duration);
 			      
 				//Return the original widget ID, found in onCreate().

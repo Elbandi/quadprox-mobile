@@ -1,27 +1,5 @@
 package it.quadrata.android.quad_prox_mob;
 
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -40,6 +18,26 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public class WidgetProvider extends AppWidgetProvider {
@@ -192,7 +190,7 @@ public class WidgetProvider extends AppWidgetProvider {
 			widgetId = params[0];
 			
 			updateViews.removeAllViews(R.id.nodeList);
-			Log.i(getClass().getSimpleName(), "Called with appWidgetId = " + widgetId);
+			Log.i(TAG, "Called with appWidgetId = " + widgetId);
 			
 	        // Retrieving of widget preferences
 			Map<String, String> prefs = WidgetPrefsActivity.getPrefs(context, widgetId);
@@ -340,7 +338,7 @@ public class WidgetProvider extends AppWidgetProvider {
 							.getString("release"));
 					
 					// Create remote view for the object to add to linear layout
-					Log.i(getClass().getSimpleName(), item.toString());
+					Log.i(TAG, item.toString());
 					RemoteViews v = new RemoteViews(context.getPackageName(), R.layout.widget_row_layout);
 					
 					// ... Set Text on text views in "v" for the current object
@@ -357,9 +355,11 @@ public class WidgetProvider extends AppWidgetProvider {
 
 					Intent vmListIntent = new Intent(context, VMListActivity.class);
 					// Putting VM data into the intent for VM stats activity
-					vmListIntent.setData(Uri.withAppendedPath(
-							Uri.parse(WidgetProvider.URI_SCHEME + "://widget/id/"), 
-								String.valueOf(widgetId) + "/" + i));
+                    long id = WidgetPrefsActivity.getNextId(context, widgetId);
+                    Uri uri = Uri.withAppendedPath(Uri.parse(WidgetProvider.URI_SCHEME +
+                            "://widget/id/"), String.valueOf(widgetId) + "/" + String.valueOf(id));
+                    Log.i(TAG, "Setting URI: " + uri.toString());
+					vmListIntent.setData(uri);
 
 					vmListIntent.putExtra("server", server);
 					vmListIntent.putExtra("ticket", ticket);

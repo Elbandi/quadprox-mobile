@@ -180,6 +180,19 @@ public class WidgetPrefsActivity extends TabActivity {
 		
 		return prefs;
 	}
+    
+    public static synchronized long getNextId(Context context, int widgetId) {
+        long id;
+        
+		SharedPreferences widgetPrefs = 
+				context.getSharedPreferences("WidgetPrefs_" + widgetId, Context.MODE_PRIVATE);
+        id = widgetPrefs.getLong("rowId", 0);
+        SharedPreferences.Editor widgetPrefsEditor = widgetPrefs.edit();
+        widgetPrefsEditor.putLong("rowId", id + 1);
+        widgetPrefsEditor.commit();
+        
+        return id;
+    }
 	
 	public static class TextChangeListener implements android.text.TextWatcher {
 		private static Map<String, Editable> changed =
