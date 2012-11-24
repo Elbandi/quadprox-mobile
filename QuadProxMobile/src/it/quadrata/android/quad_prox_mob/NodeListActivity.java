@@ -161,7 +161,7 @@ public class NodeListActivity extends Activity {
 					ticket = data.getString("ticket");
 					token = data.getString("CSRFPreventionToken");
 
-					// Cluster info request				
+					// Cluster info request
 					HttpGet clusterRequest = new HttpGet(server
 							+ "/api2/json/cluster/status");
 					clusterRequest.addHeader("Cookie", "PVEAuthCookie="
@@ -171,15 +171,16 @@ public class NodeListActivity extends Activity {
 					JSONObject clusterObject = new JSONObject(clusterResponse);
 					JSONArray clusterDataArray = clusterObject
 							.getJSONArray("data");
-					JSONObject clusterInfo =  (JSONObject) clusterDataArray.get(0);
+					JSONObject clusterInfo = (JSONObject) clusterDataArray
+							.get(0);
 					cluster = clusterInfo.optString("name");
-					hostInfo.post(new Runnable() {					
+					hostInfo.post(new Runnable() {
 						@Override
 						public void run() {
-							hostInfo.setText(cluster);							
+							hostInfo.setText(cluster);
 						}
 					});
-					
+
 					HttpGet versionRequest = new HttpGet(server
 							+ "/api2/json/version");
 					versionRequest.addHeader("Cookie", "PVEAuthCookie="
@@ -371,7 +372,9 @@ public class NodeListActivity extends Activity {
 							}
 						});
 				AlertDialog alertDialog = builder.create();
-				alertDialog.show();
+				if (!isFinishing()) {
+					alertDialog.show();
+				}
 			}
 		});
 	}
@@ -403,7 +406,9 @@ public class NodeListActivity extends Activity {
 							}
 						});
 				AlertDialog alertDialog = builder.create();
-				alertDialog.show();
+				if (!isFinishing()) {
+					alertDialog.show();
+				}
 			}
 		});
 	}
@@ -442,7 +447,9 @@ public class NodeListActivity extends Activity {
 							}
 						});
 				AlertDialog alertDialog = builder.create();
-				alertDialog.show();
+				if (!isFinishing()) {
+					alertDialog.show();
+				}
 			}
 		});
 	}

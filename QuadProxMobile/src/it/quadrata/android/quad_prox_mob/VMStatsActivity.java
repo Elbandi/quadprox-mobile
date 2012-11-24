@@ -277,7 +277,9 @@ public class VMStatsActivity extends Activity {
 											}
 										});
 								AlertDialog alertDialog = builder.create();
-								alertDialog.show();
+								if (!isFinishing()) {
+									alertDialog.show();
+								}
 							}
 						});
 					} else {
@@ -367,7 +369,9 @@ public class VMStatsActivity extends Activity {
 											}
 										});
 								AlertDialog alertDialog = builder.create();
-								alertDialog.show();
+								if (!isFinishing()) {
+									alertDialog.show();
+								}
 							}
 						});
 					} else {
@@ -471,7 +475,9 @@ public class VMStatsActivity extends Activity {
 											}
 										});
 								AlertDialog alertDialog = builder.create();
-								alertDialog.show();
+								if (!isFinishing()) {
+									alertDialog.show();
+								}
 							}
 						});
 					} else {
@@ -518,7 +524,9 @@ public class VMStatsActivity extends Activity {
 											}
 										});
 								AlertDialog alertDialog = builder.create();
-								alertDialog.show();
+								if (!isFinishing()) {
+									alertDialog.show();
+								}
 							}
 						});
 					}
@@ -765,7 +773,9 @@ public class VMStatsActivity extends Activity {
 							}
 						});
 				AlertDialog alertDialog = builder.create();
-				alertDialog.show();
+				if (!isFinishing()) {
+					alertDialog.show();
+				}
 			}
 		});
 	}
@@ -787,7 +797,9 @@ public class VMStatsActivity extends Activity {
 							}
 						});
 				AlertDialog alertDialog = builder.create();
-				alertDialog.show();
+				if (!isFinishing()) {
+					alertDialog.show();
+				}
 			}
 		});
 	}

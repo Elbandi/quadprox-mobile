@@ -404,7 +404,9 @@ public class VMListActivity extends Activity {
 							}
 						});
 				AlertDialog alertDialog = builder.create();
-				alertDialog.show();
+				if (!isFinishing()) {
+					alertDialog.show();
+				}
 			}
 		});
 	}

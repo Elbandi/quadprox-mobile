@@ -328,7 +328,9 @@ public class ClusterLogActivity extends Activity {
 							}
 						});
 				AlertDialog alertDialog = builder.create();
-				alertDialog.show();
+				if (!isFinishing()) {
+					alertDialog.show();
+				}
 			}
 		});
 	}

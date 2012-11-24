@@ -204,7 +204,9 @@ public class LogStatsActivity extends Activity {
 							}
 						});
 				AlertDialog alertDialog = builder.create();
-				alertDialog.show();
+				if (!isFinishing()) {
+					alertDialog.show();
+				}
 			}
 		});
 	}
