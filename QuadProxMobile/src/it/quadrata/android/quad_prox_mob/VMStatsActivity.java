@@ -1,26 +1,5 @@
 package it.quadrata.android.quad_prox_mob;
 
-import java.io.IOException;
-import java.net.URI;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -44,6 +23,25 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.io.IOException;
+import java.net.URI;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class VMStatsActivity extends Activity {
 
@@ -401,6 +399,98 @@ public class VMStatsActivity extends Activity {
 		}).start();
 	}
 
+	private void shutdownVm() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					if (isOnline() == false) {
+						throw new Exception();
+					}
+					ProxmoxCustomApp httpApp = (ProxmoxCustomApp) getApplication();
+					HttpClient shutdownVmHttpClient = httpApp.getHttpClient();
+					HttpPost shutdownVmRequest = new HttpPost();
+					URI vzStopUri = new URI(server + "/api2/json/nodes/" + node
+							+ "/openvz/" + vmid + "/status/shutdown");
+					URI qemuStopUri = new URI(server + "/api2/json/nodes/"
+							+ node + "/qemu/" + vmid + "/status/shutdown");
+					if (type.equals("vz")) {
+						shutdownVmRequest.setURI(vzStopUri);
+					} else {
+						shutdownVmRequest.setURI(qemuStopUri);
+					}
+					shutdownVmRequest
+							.addHeader("Cookie", "PVEAuthCookie=" + ticket);
+					shutdownVmRequest.addHeader("CSRFPreventionToken", token);
+					final ResponseObject shutdownResponse = shutdownVmHttpClient
+							.execute(shutdownVmRequest, vmStatsResponseHandler);
+					String shutdownContent = shutdownResponse.entity_content
+							.substring(shutdownResponse.entity_content.indexOf("{"));
+					JSONObject contentObj = new JSONObject(shutdownContent);
+					JSONObject errorsObj = contentObj.optJSONObject("errors");
+					if (errorsObj != null) {
+						Iterator errorsIterator = errorsObj.keys();
+						while (errorsIterator.hasNext()) {
+							String error_label = (String) errorsIterator.next();
+							shutdownResponse.entity_errors = shutdownResponse.entity_errors
+									.concat("\n" + error_label + ": "
+											+ errorsObj.getString(error_label));
+						}
+					}
+					if (shutdownResponse.status_code != 200) {
+						VMStatsActivity.this.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								AlertDialog.Builder builder = new AlertDialog.Builder(
+										VMStatsActivity.this);
+								builder.setCancelable(false);
+								builder.setTitle("Http error "
+										+ Integer
+												.toString(shutdownResponse.status_code));
+								builder.setMessage(shutdownResponse.status_reason
+										+ shutdownResponse.entity_errors);
+								builder.setNeutralButton("Ok",
+										new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(
+													DialogInterface dialog,
+													int id) {
+												dialog.dismiss();
+											}
+										});
+								AlertDialog alertDialog = builder.create();
+								if (!isFinishing()) {
+									alertDialog.show();
+								}
+							}
+						});
+					} else {
+						VMStatsActivity.this.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								Toast shutdownVmToast = Toast.makeText(
+										VMStatsActivity.this, name
+												+ " shutdown request sent",
+										Toast.LENGTH_SHORT);
+								shutdownVmToast.show();
+							}
+						});
+					}
+					// Updating VM stats
+					Thread.sleep(2000);
+					updateVmStats();
+				} catch (Exception e) {
+					if (e.getMessage() != null) {
+						Log.e(e.getClass().getName(), e.getMessage());
+					} else {
+						Log.e(e.getClass().getName(), "No error message");
+					}
+					showActionErrorDialog();
+				}
+			}
+		}).start();
+	}
+
 	private void migrateVm() {
 		new Thread(new Runnable() {
 			@Override
@@ -599,6 +689,36 @@ public class VMStatsActivity extends Activity {
 								public void onClick(DialogInterface dialog,
 										int id) {
 									stopVm();
+								}
+							});
+					builder.setNegativeButton("No",
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int id) {
+									dialog.dismiss();
+								}
+							});
+					AlertDialog alertDialog = builder.create();
+					alertDialog.show();
+				}
+			});
+			return true;
+        case R.id.shutdownVmPref:
+			VMStatsActivity.this.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					AlertDialog.Builder builder = new AlertDialog.Builder(
+							VMStatsActivity.this);
+					builder.setCancelable(false);
+					builder.setMessage("Do you really want to shutdown " + name
+							+ "?");
+					builder.setPositiveButton("Yes",
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int id) {
+									shutdownVm();
 								}
 							});
 					builder.setNegativeButton("No",

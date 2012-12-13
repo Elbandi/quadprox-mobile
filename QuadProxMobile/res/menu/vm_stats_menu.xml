@@ -9,6 +9,9 @@
         android:id="@+id/startVmPref"
         android:title="@string/startPref_label"/>
     <item
+        android:id="@+id/shutdownVmPref"
+        android:title="@string/shutdownPref_label"/>
+    <item
         android:id="@+id/stopVmPref"
         android:title="@string/stopPref_label"/>
     <item

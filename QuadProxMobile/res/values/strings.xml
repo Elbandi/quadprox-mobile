@@ -24,6 +24,7 @@
     <string name="uptime_label">Uptime: </string>
     <string name="startPref_label">Start</string>
     <string name="stopPref_label">Stop</string>
+    <string name="shutdownPref_label">Shutdown</string>
     <string name="status_label">Status: </string>
     <string name="id_label">ID: </string>
     <string name="errors_label">Errors: </string>
