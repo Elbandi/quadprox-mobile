@@ -171,17 +171,15 @@ public class androidVNC extends Activity {
 	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId())
-		{
-		case R.id.itemSaveAsCopy :
+		int itemId = item.getItemId();
+		if (itemId == R.id.itemSaveAsCopy) {
 			if (selected.getNickname().equals(textNickname.getText().toString()))
 				textNickname.setText("Copy of "+selected.getNickname());
 			updateSelectedFromView();
 			selected.set_Id(0);
 			saveAndWriteRecent();
 			arriveOnPage();
-			break;
-		case R.id.itemDeleteConnection :
+		} else if (itemId == R.id.itemDeleteConnection) {
 			Utils.showYesNoPrompt(this, "Delete?", "Delete " + selected.getNickname() + "?",
 					new DialogInterface.OnClickListener() {
 				@Override
@@ -191,10 +189,8 @@ public class androidVNC extends Activity {
 					arriveOnPage();
 				}
 			}, null);
-			break;
-		case R.id.itemOpenDoc :
+		} else if (itemId == R.id.itemOpenDoc) {
 			Utils.showDocumentation(this);
-			break;
 		}
 		return true;
 	}

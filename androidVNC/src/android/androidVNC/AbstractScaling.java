@@ -27,17 +27,12 @@ abstract class AbstractScaling {
 			{
 				if ( scalings[i]==null)
 				{
-					switch ( id )
-					{
-					case R.id.itemFitToScreen :
+					if (id == R.id.itemFitToScreen) {
 						scalings[i]=new FitToScreenScaling();
-						break;
-					case R.id.itemOneToOne :
+					} else if (id == R.id.itemOneToOne) {
 						scalings[i]=new OneToOneScaling();
-						break;
-					case R.id.itemZoomable :
+					} else if (id == R.id.itemZoomable) {
 						scalings[i]=new ZoomScaling();
-						break;
 					}
 				}
 				return scalings[i];

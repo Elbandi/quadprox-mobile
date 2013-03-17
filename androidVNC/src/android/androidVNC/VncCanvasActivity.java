@@ -687,8 +687,7 @@ public class VncCanvasActivity extends Activity {
 	 */
 	@Override
 	protected Dialog onCreateDialog(int id) {
-		switch (id) {
-		case R.layout.entertext:
+		if (id == R.layout.entertext) {
 			return new EnterTextDialog(this);
 		}
 		// Default to meta key dialog
@@ -774,28 +773,20 @@ public class VncCanvasActivity extends Activity {
 		for (int i = 0; i < inputModeIds.length; ++i) {
 			if (inputModeIds[i] == id) {
 				if (inputModeHandlers[i] == null) {
-					switch (id) {
-					case R.id.itemInputFitToScreen:
+					if (id == R.id.itemInputFitToScreen) {
 						inputModeHandlers[i] = new FitToScreenMode();
-						break;
-					case R.id.itemInputPan:
+					} else if (id == R.id.itemInputPan) {
 						inputModeHandlers[i] = new PanMode();
-						break;
-					case R.id.itemInputMouse:
+					} else if (id == R.id.itemInputMouse) {
 						inputModeHandlers[i] = new MouseMode();
-						break;
-					case R.id.itemInputTouchPanTrackballMouse:
+					} else if (id == R.id.itemInputTouchPanTrackballMouse) {
 						inputModeHandlers[i] = new TouchPanTrackballMouse();
-						break;
-					case R.id.itemInputDPadPanTouchMouse:
+					} else if (id == R.id.itemInputDPadPanTouchMouse) {
 						inputModeHandlers[i] = new DPadPanTouchMouseMode();
-						break;
-					case R.id.itemInputTouchPanZoomMouse:
+					} else if (id == R.id.itemInputTouchPanZoomMouse) {
 						inputModeHandlers[i] = new ZoomInputHandler();
-						break;
-					case R.id.itemInputTouchpad:
+					} else if (id == R.id.itemInputTouchpad) {
 						inputModeHandlers[i] = new TouchpadInputHandler();
-						break;
 					}
 				}
 				return inputModeHandlers[i];
@@ -830,42 +821,41 @@ public class VncCanvasActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		vncCanvas.afterMenu = true;
-		switch (item.getItemId()) {
-		case R.id.itemInfo:
+		int itemId = item.getItemId();
+		if (itemId == R.id.itemInfo) {
 			vncCanvas.showConnectionInfo();
 			return true;
-		case R.id.itemSpecialKeys:
+		} else if (itemId == R.id.itemSpecialKeys) {
 			showDialog(R.layout.metakey);
 			return true;
-		case R.id.itemColorMode:
+		} else if (itemId == R.id.itemColorMode) {
 			selectColorModel();
 			return true;
-			// Following sets one of the scaling options
-		case R.id.itemZoomable:
-		case R.id.itemOneToOne:
-		case R.id.itemFitToScreen:
+		} else if (itemId == R.id.itemZoomable
+				|| itemId == R.id.itemOneToOne
+				|| itemId == R.id.itemFitToScreen) {
 			AbstractScaling.getById(item.getItemId()).setScaleTypeForActivity(
 					this);
 			item.setChecked(true);
 			showPanningState();
 			return true;
-		case R.id.itemCenterMouse:
+		} else if (itemId == R.id.itemCenterMouse) {
 			vncCanvas.warpMouse(vncCanvas.absoluteXPosition
 					+ vncCanvas.getVisibleWidth() / 2,
 					vncCanvas.absoluteYPosition + vncCanvas.getVisibleHeight()
 							/ 2);
 			return true;
-		case R.id.itemDisconnect:
+		} else if (itemId == R.id.itemDisconnect) {
 			vncCanvas.closeConnection();
 			finish();
 			return true;
-		case R.id.itemEnterText:
+		} else if (itemId == R.id.itemEnterText) {
 			showDialog(R.layout.entertext);
 			return true;
-		case R.id.itemCtrlAltDel:
+		} else if (itemId == R.id.itemCtrlAltDel) {
 			vncCanvas.sendMetaKey(MetaKeyBean.keyCtrlAltDel);
 			return true;
-		case R.id.itemFollowMouse:
+		} else if (itemId == R.id.itemFollowMouse) {
 			boolean newFollow = !connection.getFollowMouse();
 			item.setChecked(newFollow);
 			connection.setFollowMouse(newFollow);
@@ -874,31 +864,31 @@ public class VncCanvasActivity extends Activity {
 			}
 			connection.save(database.getWritableDatabase());
 			return true;
-		case R.id.itemFollowPan:
+		} else if (itemId == R.id.itemFollowPan) {
 			boolean newFollowPan = !connection.getFollowPan();
 			item.setChecked(newFollowPan);
 			connection.setFollowPan(newFollowPan);
 			connection.save(database.getWritableDatabase());
 			return true;
-		case R.id.itemArrowLeft:
+		} else if (itemId == R.id.itemArrowLeft) {
 			vncCanvas.sendMetaKey(MetaKeyBean.keyArrowLeft);
 			return true;
-		case R.id.itemArrowUp:
+		} else if (itemId == R.id.itemArrowUp) {
 			vncCanvas.sendMetaKey(MetaKeyBean.keyArrowUp);
 			return true;
-		case R.id.itemArrowRight:
+		} else if (itemId == R.id.itemArrowRight) {
 			vncCanvas.sendMetaKey(MetaKeyBean.keyArrowRight);
 			return true;
-		case R.id.itemArrowDown:
+		} else if (itemId == R.id.itemArrowDown) {
 			vncCanvas.sendMetaKey(MetaKeyBean.keyArrowDown);
 			return true;
-		case R.id.itemSendKeyAgain:
+		} else if (itemId == R.id.itemSendKeyAgain) {
 			sendSpecialKeyAgain();
 			return true;
-		case R.id.itemOpenDoc:
+		} else if (itemId == R.id.itemOpenDoc) {
 			Utils.showDocumentation(this);
 			return true;
-		default:
+		} else {
 			AbstractInputHandler input = getInputHandlerById(item.getItemId());
 			if (input != null) {
 				inputHandler = input;
