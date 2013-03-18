@@ -18,6 +18,10 @@
         android:id="@+id/migrateVmPref"
         android:title="@string/migratePref_label"/>
     <item
+        android:id="@+id/consoleVmPref"
+        android:title="@string/consolePref_label">
+    </item>
+    <item
         android:id="@+id/logPref"
         android:title="@string/logPref_label"/>
 

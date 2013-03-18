@@ -1,5 +1,8 @@
 package it.quadrata.android.quad_prox_mob;
 
+import android.androidVNC.ConnectionBean;
+import android.androidVNC.VncCanvasActivity;
+import android.androidVNC.VncConstants;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -491,6 +494,101 @@ public class VMStatsActivity extends Activity {
 		}).start();
 	}
 
+	private void consoleVm() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					if (isOnline() == false) {
+						throw new Exception();
+					}
+					ProxmoxCustomApp httpApp = (ProxmoxCustomApp) getApplication();
+					HttpClient consoleVmHttpClient = httpApp.getHttpClient();
+					HttpPost consoleVmRequest = new HttpPost();
+					URI vzConsoleUri = new URI(server + "/api2/json/nodes/" + node
+							+ "/openvz/" + vmid + "/vncproxy"); // nottested
+					URI qemuConsoleUri = new URI(server + "/api2/json/nodes/"
+							+ node + "/qemu/" + vmid + "/vncproxy");
+					if (type.equals("vz")) {
+						consoleVmRequest.setURI(vzConsoleUri);
+					} else {
+						consoleVmRequest.setURI(qemuConsoleUri);
+					}
+					consoleVmRequest
+							.addHeader("Cookie", "PVEAuthCookie=" + ticket);
+					consoleVmRequest.addHeader("CSRFPreventionToken", token);
+					final ResponseObject consoleResponse = consoleVmHttpClient
+							.execute(consoleVmRequest, vmStatsResponseHandler);
+					String consoleContent = consoleResponse.entity_content
+							.substring(consoleResponse.entity_content.indexOf("{"));
+					JSONObject contentObj = new JSONObject(consoleContent);
+					JSONObject errorsObj = contentObj.optJSONObject("errors");
+					if (errorsObj != null) {
+						Iterator errorsIterator = errorsObj.keys();
+						while (errorsIterator.hasNext()) {
+							String error_label = (String) errorsIterator.next();
+							consoleResponse.entity_errors = consoleResponse.entity_errors
+									.concat("\n" + error_label + ": "
+											+ errorsObj.getString(error_label));
+						}
+					}
+					if (consoleResponse.status_code != 200) {
+						VMStatsActivity.this.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								AlertDialog.Builder builder = new AlertDialog.Builder(
+										VMStatsActivity.this);
+								builder.setCancelable(false);
+								builder.setTitle("Http error "
+										+ Integer
+												.toString(consoleResponse.status_code));
+								builder.setMessage(consoleResponse.status_reason
+										+ consoleResponse.entity_errors);
+								builder.setNeutralButton("Ok",
+										new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(
+													DialogInterface dialog,
+													int id) {
+												dialog.dismiss();
+											}
+										});
+								AlertDialog alertDialog = builder.create();
+								if (!isFinishing()) {
+									alertDialog.show();
+								}
+							}
+						});
+					} else {
+						JSONObject consoleData = contentObj.getJSONObject("data");
+						ConnectionBean connection = new ConnectionBean();
+						connection.setAddress(consoleVmRequest.getURI().getHost());
+						connection.setNickname(connection.getAddress());
+						connection.setColorModel("C24bit");
+						connection.setPort(consoleData.getInt("port"));
+						connection.setUserName(consoleData.getString("user"));
+						connection.setPassword(consoleData.getString("ticket"));
+						connection.setCert(consoleData.getString("cert"));
+						Intent intent = new Intent(VMStatsActivity.this, VncCanvasActivity.class);
+						intent.putExtra(VncConstants.CONNECTION, connection.Gen_getValues());
+//						intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						startActivity(intent);
+					}
+					// Updating VM stats
+					Thread.sleep(2000);
+					updateVmStats();
+				} catch (Exception e) {
+					if (e.getMessage() != null) {
+						Log.e(e.getClass().getName(), e.getMessage());
+					} else {
+						Log.e(e.getClass().getName(), "No error message");
+					}
+					showActionErrorDialog();
+				}
+			}
+		}).start();
+	}
+
 	private void migrateVm() {
 		new Thread(new Runnable() {
 			@Override
@@ -719,6 +817,36 @@ public class VMStatsActivity extends Activity {
 								public void onClick(DialogInterface dialog,
 										int id) {
 									shutdownVm();
+								}
+							});
+					builder.setNegativeButton("No",
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int id) {
+									dialog.dismiss();
+								}
+							});
+					AlertDialog alertDialog = builder.create();
+					alertDialog.show();
+				}
+			});
+			return true;
+        case R.id.consoleVmPref:
+			VMStatsActivity.this.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					AlertDialog.Builder builder = new AlertDialog.Builder(
+							VMStatsActivity.this);
+					builder.setCancelable(false);
+					builder.setMessage("Do you really want to view the console for  " + name
+							+ "?");
+					builder.setPositiveButton("Yes",
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int id) {
+									consoleVm();
 								}
 							});
 					builder.setNegativeButton("No",
