@@ -946,10 +946,19 @@ public class VncCanvasActivity extends Activity {
 		}
 	}
 
+	public static final int KEYCODE_ESCAPE = 111;
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent evt) {
 		if (keyCode == KeyEvent.KEYCODE_MENU)
 			return super.onKeyDown(keyCode, evt);
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			if (evt.getRepeatCount() == 0) {
+				dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KEYCODE_ESCAPE));
+				return true;
+			} else { // ???
+				return true;
+			}
+		}
 
 		return inputHandler.onKeyDown(keyCode, evt);
 	}
