@@ -235,6 +235,10 @@ public class VncCanvas extends ImageView {
 			rfb.initCapabilities();
 			rfb.setupTunneling();
 			authType = rfb.negotiateAuthenticationTight();
+		} else if (secType == RfbProto.SecTypeVeNCrypt) {
+			authType = rfb.authenticateVeNCrypt();
+		} else if (secType == RfbProto.SecTypeVeNCrypt) {
+			authType = rfb.authenticateVeNCrypt();
 		} else if (secType == RfbProto.SecTypeUltra34) {
 			rfb.prepareDH();
 			authType = RfbProto.AuthUltra;
@@ -247,12 +251,46 @@ public class VncCanvas extends ImageView {
 			Log.i(TAG, "No authentication needed");
 			rfb.authenticateNone();
 			break;
+		case RfbProto.AuthPlain:
+			Log.i(TAG, "Plain authentication needed");
+			rfb.authenticatePlain(us,pw);
+			break;
 		case RfbProto.AuthVNC:
 			Log.i(TAG, "VNC authentication needed");
 			rfb.authenticateVNC(pw);
 			break;
 		case RfbProto.AuthUltra:
 			rfb.authenticateDH(us,pw);
+			break;
+		case RfbProto.AuthTLSNone:
+			Log.i(TAG, "No authentication needed");
+			rfb.authenticateTLS();
+			rfb.authenticateNone();
+			break;
+		case RfbProto.AuthTLSPlain:
+			Log.i(TAG, "Plain authentication needed");
+			rfb.authenticateTLS();
+			rfb.authenticatePlain(us,pw);
+			break;
+		case RfbProto.AuthTLSVnc:
+			Log.i(TAG, "VNC authentication needed");
+			rfb.authenticateTLS();
+			rfb.authenticateVNC(pw);
+			break;
+		case RfbProto.AuthX509None:
+			Log.i(TAG, "No authentication needed");
+			rfb.authenticateX509();
+			rfb.authenticateNone();
+			break;
+		case RfbProto.AuthX509Plain:
+			Log.i(TAG, "Plain authentication needed");
+			rfb.authenticateX509();
+			rfb.authenticatePlain(us,pw);
+			break;
+		case RfbProto.AuthX509Vnc:
+			Log.i(TAG, "VNC authentication needed");
+			rfb.authenticateX509();
+			rfb.authenticateVNC(pw);
 			break;
 		default:
 			throw new Exception("Unknown authentication scheme " + authType);

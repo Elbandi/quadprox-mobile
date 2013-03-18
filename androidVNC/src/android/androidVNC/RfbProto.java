@@ -62,6 +62,15 @@ class RfbProto {
     SecTypeNone    = 1,
     SecTypeVncAuth = 2,
     SecTypeTight   = 16,
+    SecTypeVeNCrypt = 19,
+ /*
+	SecTypeTLSNone   = 257,
+	SecTypeTLSVnc    = 258,
+	SecTypeTLSPlain  = 259,
+	SecTypeX509None  = 260,
+	SecTypeX509Vnc   = 261,
+	SecTypeX509Plain = 262,
+*/
     SecTypeUltra34 = 0xfffffffa;
 
   // Supported tunneling types
@@ -75,6 +84,13 @@ class RfbProto {
     AuthNone      = 1,
     AuthVNC       = 2,
     AuthUnixLogin = 129,
+    AuthPlain     = 256,
+    AuthTLSNone   = 257,
+    AuthTLSVnc    = 258,
+    AuthTLSPlain  = 259,
+    AuthX509None  = 260,
+    AuthX509Vnc   = 261,
+    AuthX509Plain = 262,
     AuthUltra	  = 17;
   final static String
     SigAuthNone      = "NOAUTH__",
@@ -393,7 +409,7 @@ class RfbProto {
 
     // Find first supported security type.
     for (int i = 0; i < nSecTypes; i++) {
-      if (secTypes[i] == SecTypeNone || secTypes[i] == SecTypeVncAuth) {
+      if (secTypes[i] == SecTypeNone || secTypes[i] == SecTypeVncAuth || secTypes[i] == SecTypeVeNCrypt) {
 	secType = secTypes[i];
 	break;
       }
@@ -406,6 +422,42 @@ class RfbProto {
     }
 
     return secType;
+  }
+
+  int authenticateVeNCrypt() throws Exception {
+	int majorVersion = is.readUnsignedByte();
+	int minorVersion = is.readUnsignedByte();
+	int Version = (majorVersion << 8) | minorVersion;
+	if (Version < 0x0002) {
+	  os.write(0);
+	  os.write(0);
+	  throw new Exception("Server reported an unsupported VeNCrypt version");
+	}
+	os.write(0);
+	os.write(2);
+	if (is.readUnsignedByte() != 0)
+	  throw new Exception("Server reported it could not support the VeNCrypt version");
+	int nSecTypes = is.readUnsignedByte();
+	int[] secTypes = new int[nSecTypes];
+	for(int i = 0; i < nSecTypes; i++)
+	  secTypes[i] = is.readInt();
+
+	for(int i = 0; i < nSecTypes; i++)
+	  switch(secTypes[i]) {
+	  case AuthNone:
+	  case AuthVNC:
+	  case AuthPlain:
+	  case AuthTLSNone:
+	  case AuthTLSVnc:
+	  case AuthTLSPlain:
+	  case AuthX509None:
+	  case AuthX509Vnc:
+	  case AuthX509Plain:
+		writeInt(secTypes[i]);
+		return secTypes[i];
+	  }
+
+	throw new Exception("No valid VeNCrypt sub-type");
   }
 
   //
@@ -444,6 +496,27 @@ class RfbProto {
     os.write(challenge);
 
     readSecurityResult("VNC authentication");
+  }
+
+  void authenticateTLS() throws Exception {
+    TLSTunnel tunnel = new TLSTunnel(sock);
+    tunnel.setup (this);
+  }
+
+  void authenticateX509() throws Exception {
+    X509Tunnel tunnel = new X509Tunnel(sock);
+    tunnel.setup (this);
+  }
+
+  void authenticatePlain(String User, String Password) throws Exception {
+    byte[] user = User.getBytes();
+    byte[] password = Password.getBytes();
+    writeInt(user.length);
+    writeInt(password.length);
+    os.write(user);
+    os.write(password);
+
+    readSecurityResult("Plain authentication");
   }
 
   //
@@ -1232,6 +1305,27 @@ class RfbProto {
       timeWaitedIn100us += newTimeWaited;
       timedKbits += newKbits;
     }
+  }
+
+  final int available() throws IOException {
+	    return is.available();
+  }
+
+  final int readU8() throws IOException {
+    return is.readUnsignedByte();
+  }
+
+  final int readU16() throws IOException {
+    return is.readUnsignedShort();
+  }
+
+  final int readU32() throws IOException {
+	return is.readInt();
+  }
+
+  public void setStreams(InputStream is_, OutputStream os_) {
+    is = new DataInputStream(is_);
+    os = os_;
   }
 
     synchronized void writeOpenChat() throws Exception {

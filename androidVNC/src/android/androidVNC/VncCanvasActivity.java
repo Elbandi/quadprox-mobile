@@ -39,6 +39,7 @@ import android.database.Cursor;
 import android.graphics.PointF;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -576,7 +577,10 @@ public class VncCanvasActivity extends Activity {
 			    if (path.size() >= 1) {
 			        connection.setColorModel(path.get(0));
 			    }
-			    if (path.size() >= 2) {
+			    if (path.size() >= 3) {
+			        connection.setUserName(path.get(1));
+			        connection.setPassword(path.get(2));
+			    } else if (path.size() >= 2) {
 			        connection.setPassword(path.get(1));
 			    }
 			    connection.save(database.getWritableDatabase());
@@ -604,6 +608,10 @@ public class VncCanvasActivity extends Activity {
 	  	    }
 		}
 		setContentView(R.layout.canvas);
+		if (android.os.Build.VERSION.SDK_INT > 9) {
+		    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+		    StrictMode.setThreadPolicy(policy);
+		}
 
 		vncCanvas = (VncCanvas) findViewById(R.id.vnc_canvas);
 		zoomer = (ZoomControls) findViewById(R.id.zoomer);
