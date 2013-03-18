@@ -1,23 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
 
-<android.androidVNC.VncCanvas
-    android:id="@+id/vnc_canvas"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:layout_gravity="bottom|center"
-    >
-</android.androidVNC.VncCanvas>
-  
-<com.antlersoft.android.zoomer.ZoomControls
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/zoomer"
-    android:layout_gravity="bottom|center"
-/>
+    <FrameLayout
+        android:id="@android:id/tabcontent"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1" >
 
-</FrameLayout>
+        <android.androidVNC.VncCanvas
+            android:id="@+id/vnc_canvas"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="bottom|center"
+            >
+        </android.androidVNC.VncCanvas>
+
+        <com.antlersoft.android.zoomer.ZoomControls
+            android:id="@+id/zoomer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+        />
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/buttonShowMenu"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:text="@string/showmenu_button"
+        />
+
+</LinearLayout>

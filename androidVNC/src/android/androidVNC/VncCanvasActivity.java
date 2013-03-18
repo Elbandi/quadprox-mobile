@@ -666,6 +666,19 @@ public class VncCanvasActivity extends Activity {
 			}
 
 		});
+		((Button)findViewById(R.id.buttonShowMenu)).setOnClickListener(new View.OnClickListener() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see android.view.View.OnClickListener#onClick(android.view.View)
+			 */
+			@Override
+			public void onClick(View v) {
+				((Activity) v.getContext()).openOptionsMenu();
+			}
+
+		});
 		panner = new Panner(this, vncCanvas.handler);
 
 		inputHandler = getInputHandlerById(R.id.itemInputFitToScreen);
