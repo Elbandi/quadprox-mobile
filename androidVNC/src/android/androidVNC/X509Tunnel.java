@@ -26,13 +26,24 @@ import java.net.*;
 import javax.net.ssl.*;
 import java.security.*;
 import java.security.cert.*;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+import java.io.*;
 
 public class X509Tunnel extends TLSTunnelBase
 {
 
-  public X509Tunnel (Socket sock_)
+  Certificate cert;
+
+  public X509Tunnel (Socket sock_, String certstr) throws CertificateException
   {
     super (sock_);
+
+    if (certstr != null)
+    {
+      CertificateFactory cf = CertificateFactory.getInstance ("X.509");
+      cert = cf.generateCertificate (new StringBufferInputStream (certstr));
+    }
   }
 
   protected void setParam (SSLSocket sock)
@@ -52,9 +63,63 @@ public class X509Tunnel extends TLSTunnelBase
   protected void initContext (SSLContext sc)
       throws java.security.GeneralSecurityException
   {
-    TrustManagerFactory tmf = TrustManagerFactory.getInstance ("X509");
-    KeyStore ks = KeyStore.getInstance (KeyStore.getDefaultType ());
-    tmf.init (ks);
-    sc.init (null, tmf.getTrustManagers (), null);
+    TrustManager[] myTM;
+
+    if (cert != null)
+    {
+      myTM = new TrustManager[]
+      { new X509TrustManager ()
+      {
+        public java.security.cert.X509Certificate[] getAcceptedIssuers ()
+        {
+          return null;
+        }
+
+        public void checkClientTrusted (
+            java.security.cert.X509Certificate[] certs, String authType)
+            throws CertificateException
+        {
+          throw new CertificateException ("no clients");
+        }
+
+        public void checkServerTrusted (
+            java.security.cert.X509Certificate[] certs, String authType)
+            throws CertificateException
+        {
+
+          if (certs == null || certs.length < 1)
+          {
+            throw new CertificateException ("no certs");
+          }
+          if (certs == null || certs.length > 1)
+          {
+            throw new CertificateException ("cert path too long");
+          }
+          PublicKey cakey = cert.getPublicKey ();
+
+          boolean ca_match;
+          try
+          {
+            certs[0].verify (cakey);
+            ca_match = true;
+          } catch (Exception e)
+          {
+            ca_match = false;
+          }
+
+          if (!ca_match && !cert.equals (certs[0]))
+          {
+            throw new CertificateException ("certificate does not match");
+          }
+        }
+      } };
+    } else
+    {
+      TrustManagerFactory tmf = TrustManagerFactory.getInstance ("X509");
+      KeyStore ks = KeyStore.getInstance (KeyStore.getDefaultType ());
+      tmf.init (ks);
+      myTM = tmf.getTrustManagers();
+    }
+    sc.init (null, myTM, null);
   }
 }

@@ -503,8 +503,8 @@ class RfbProto {
     tunnel.setup (this);
   }
 
-  void authenticateX509() throws Exception {
-    X509Tunnel tunnel = new X509Tunnel(sock);
+  void authenticateX509(String certstr) throws Exception {
+    X509Tunnel tunnel = new X509Tunnel(sock, certstr);
     tunnel.setup (this);
   }
 

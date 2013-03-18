@@ -15,11 +15,11 @@ import java.lang.Comparable;
  * @author Michael A. MacDonald
  *
  */
-class ConnectionBean extends AbstractConnectionBean implements Comparable<ConnectionBean> {
+public class ConnectionBean extends AbstractConnectionBean implements Comparable<ConnectionBean> {
 	static final NewInstance<ConnectionBean> newInstance=new NewInstance<ConnectionBean>() {
 		public ConnectionBean get() { return new ConnectionBean(); }
 	};
-	ConnectionBean()
+	public ConnectionBean()
 	{
 		set_Id(0);
 		setAddress("");
@@ -28,6 +28,7 @@ class ConnectionBean extends AbstractConnectionBean implements Comparable<Connec
 		setNickname("");
 		setUserName("");
 		setPort(5900);
+		setCert(null);
 		setColorModel(COLORMODEL.C64.nameString());
 		setScaleMode(ScaleType.MATRIX);
 		setInputMode(VncCanvasActivity.TOUCH_ZOOM_MODE);

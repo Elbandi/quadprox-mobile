@@ -279,17 +279,17 @@ public class VncCanvas extends ImageView {
 			break;
 		case RfbProto.AuthX509None:
 			Log.i(TAG, "No authentication needed");
-			rfb.authenticateX509();
+			rfb.authenticateX509(connection.getCert());
 			rfb.authenticateNone();
 			break;
 		case RfbProto.AuthX509Plain:
 			Log.i(TAG, "Plain authentication needed");
-			rfb.authenticateX509();
+			rfb.authenticateX509(connection.getCert());
 			rfb.authenticatePlain(us,pw);
 			break;
 		case RfbProto.AuthX509Vnc:
 			Log.i(TAG, "VNC authentication needed");
-			rfb.authenticateX509();
+			rfb.authenticateX509(connection.getCert());
 			rfb.authenticateVNC(pw);
 			break;
 		default:

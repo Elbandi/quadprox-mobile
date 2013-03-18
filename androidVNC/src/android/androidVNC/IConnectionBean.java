@@ -22,6 +22,8 @@ interface IConnectionBean {
 	@FieldAccessor
 	String getPassword();
 	@FieldAccessor
+	String getCert();
+	@FieldAccessor
 	String getColorModel();
 	/**
 	 * Records bitmap data implementation selection.  0 for auto, 1 for force full bitmap, 2 for force tiled
