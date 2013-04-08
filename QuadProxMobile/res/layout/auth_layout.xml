@@ -84,33 +84,14 @@
             android:layout_alignBottom="@+id/usernameInput"
             android:layout_alignLeft="@+id/serverLabel"
             android:text="@string/username_label" />
-
-        <EditText
-            android:id="@+id/realmInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/usernameInput"
-            android:layout_alignRight="@+id/usernameInput"
-            android:layout_below="@+id/usernameInput"
-            android:hint="@string/realm_hint"
-            android:singleLine="true" />
-
-        <TextView
-            android:id="@+id/realmLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/realmInput"
-            android:layout_alignBottom="@+id/realmInput"
-            android:layout_alignLeft="@+id/usernameLabel"
-            android:text="@string/realm_label" />
-
-        <EditText
+        
+		<EditText
             android:id="@+id/passwordInput"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/usernameInput"
             android:layout_alignRight="@+id/usernameInput"
-            android:layout_below="@+id/realmInput"
+            android:layout_below="@+id/usernameInput"
             android:hint="@string/password_hint"
             android:inputType="textPassword"
             android:singleLine="true" />
@@ -121,15 +102,34 @@
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/passwordInput"
             android:layout_alignBottom="@+id/passwordInput"
-            android:layout_alignLeft="@+id/realmLabel"
+            android:layout_alignLeft="@+id/usernameLabel"
             android:text="@string/password_label" />
+
+        <EditText
+            android:id="@+id/realmInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/usernameInput"
+            android:layout_alignRight="@+id/usernameInput"
+            android:layout_below="@+id/passwordInput"
+            android:hint="@string/realm_hint"
+            android:singleLine="true" />
+
+        <TextView
+            android:id="@+id/realmLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/realmInput"
+            android:layout_alignBottom="@+id/realmInput"
+            android:layout_alignLeft="@+id/passwordLabel"
+            android:text="@string/realm_label" />
 
         <Button
             android:id="@+id/loginButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignRight="@+id/passwordInput"
-            android:layout_below="@+id/passwordInput"
+            android:layout_alignRight="@+id/realmInput"
+            android:layout_below="@+id/realmInput"
             android:text="@string/loginButton_label" />
     </RelativeLayout>
 
