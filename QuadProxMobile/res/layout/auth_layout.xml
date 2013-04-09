@@ -38,6 +38,7 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/contentLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/titleLayout"
@@ -84,8 +85,8 @@
             android:layout_alignBottom="@+id/usernameInput"
             android:layout_alignLeft="@+id/serverLabel"
             android:text="@string/username_label" />
-        
-		<EditText
+
+        <EditText
             android:id="@+id/passwordInput"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -133,12 +134,30 @@
             android:text="@string/loginButton_label" />
     </RelativeLayout>
 
-    <ImageView
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:adjustViewBounds="true"
-        android:src="@drawable/quadrata_logo" />
+        android:background="#D9D9D9" >
+
+        <ImageView
+            android:id="@+id/quad_logo"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:adjustViewBounds="true"
+            android:src="@drawable/quadrata_logo" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:layout_centerVertical="true"
+            android:text="@string/app_site"
+            android:textSize="12sp"
+            android:textColor="#000000" />
+    </RelativeLayout>
 
 </RelativeLayout>
