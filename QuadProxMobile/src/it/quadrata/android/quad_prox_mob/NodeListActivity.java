@@ -169,17 +169,28 @@ public class NodeListActivity extends Activity {
 					String clusterResponse = serverHttpClient.execute(
 							clusterRequest, serverResponseHandler);
 					JSONObject clusterObject = new JSONObject(clusterResponse);
-					JSONArray clusterDataArray = clusterObject
-							.getJSONArray("data");
-					JSONObject clusterInfo = (JSONObject) clusterDataArray
-							.get(0);
-					cluster = clusterInfo.optString("name");
-					hostInfo.post(new Runnable() {
-						@Override
-						public void run() {
-							hostInfo.setText(cluster);
-						}
-					});
+					String clusterData = clusterObject.getString("data");
+					if (clusterData.equals("null")) {
+						hostInfo.post(new Runnable() {
+							@Override
+							public void run() {
+								hostInfo.setText(server.substring(8,
+										server.length() - 5));
+							}
+						});
+					} else {
+						JSONArray clusterDataArray = clusterObject
+								.getJSONArray("data");
+						JSONObject clusterInfo = (JSONObject) clusterDataArray
+								.get(0);
+						cluster = clusterInfo.optString("name");
+						hostInfo.post(new Runnable() {
+							@Override
+							public void run() {
+								hostInfo.setText(cluster);
+							}
+						});
+					}
 
 					HttpGet versionRequest = new HttpGet(server
 							+ "/api2/json/version");
